@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Forgot password{% endblock %}
+
+{% block body %}
+<div class="col-sm-12 h-500">
+		<div class="row justify-content-center">			
+			<div class="col-md-6 col-sm-12 text-center">	
+				<h1>Żądanie zmiany hasła</h1>
+				
+				<form method="post" action="/password/request-reset">
+					<div class="form-group">
+						<label for="inputEmail">Wpisz swój adres email:</label>
+						<input type="email" id="inputEmail" name="email" placeholder="Adres email" autofocus required class="form-control" />
+					</div>
+					<button type="submit" class="btn btn-primary">Wyślij żadanie zmiany hasła</button>
+				</form>
+			</div>
+		</div>
+</div>
+{% endblock %}

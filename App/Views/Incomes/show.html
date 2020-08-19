@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Incomes{% endblock %}
+
+{% block body %}
+		
+			<div class="col-sm-12">		
+				
+				<div class="row justify-content-center" id="incomesContainer">
+					<div class="col-sm-6 mt-2">
+					<form method="post" action="/Incomes/add">
+						<div class="row">
+							<div class="col-sm-12 mb-2 text-center">
+								<h4>Dodawanie nowego dochodu</h4>
+							</div>
+							<div class="col-sm-12 mb-2">
+								<p>Kwota dochodu: </p>
+								<div class="input-group">
+									<input type="text" class="form-control" placeholder="Podaj kwotę dochodu" name="incomeAmount" value="{{ data.incomeAmount }}">
+									<div class="input-group-append">
+										<span class="input-group-text"> PLN </span>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 mb-2">
+								<div class="form-group">
+									<p>Data dochodu:</p>
+									<input type="date" id="dateIncome" class="form-control" name="dateIncome" value=" {{ data.dateIncome }} ">
+								</div>
+							</div>
+							<div class="col-sm-12 mb-2 border border-success">
+								<div id="incomeCategory" class="form-group">
+									<p>Kategoria:</p>							
+									{% for cathegory in income_cathegories %}
+										<div class="custom-control custom-radio light-input-bg">
+											<input type="radio" class="custom-control-input" id="{{ cathegory.name }}" value="{{ cathegory.id }}" name="incomeCategory">
+											<label class="custom-control-label" for="{{ cathegory.name }}">{{ cathegory.name }}</label>
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+							<div class="col-sm-12 mb-2">
+								<div class="form-group">
+									<p>Komentarz(opcjonalnie):</p>
+									<textarea id="commentIncome" class="form-control" placeholder="" name="commentIncome">{{ data.commentIncome }} </textarea>
+								</div>
+							</div>
+
+							<div class="col-sm-12 mb-2">
+								<button type="submit" class="btn btn-success btn-block" id="addIncomeButton"> <span class="fa fa-save"></span> Dodaj nowy dochód</input>
+							</div>
+						</div>
+					</form>
+						
+					</div>
+				</div>				
+			</div>
+
+{% endblock %}

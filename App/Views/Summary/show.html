@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Summary{% endblock %}
+{% block footer %}
+	<script src="/js/tables.js"></script>
+{% endblock %}
+{% block body %}
+		
+	<div class="col-sm-12">		
+		
+		<div class="row" id="summaryContainer">
+			<div class="col-sm-12" id="divToHeightEvaluation">
+				<div class="row justify-content-center">
+					<div class="col-md-6 col-sm-12">
+						<div class="row">
+							<form>
+							<div class="col-sm-12 my-2">
+								<h4 class="text-center"><b>Podsumowanie wydatków oraz dochodów za podany okres</b></h4>
+							</div>
+							
+							<div class="col-sm-12 mb-2">
+								<div id="choosePeriodDiv" class="input-group">
+									<select class="custom-select" name="dateSpan" id="chosenDateSpan">
+										<option value="lastMonth" selected>Obecny miesiąc</option>
+										<option value="previousMonth" >Poprzedni miesiąc</option>
+										<option value="lastYear" >Obecny rok</option>
+										<option value="nonStandardSpan" >Wybierz niestandardowy okres</option>
+									</select>
+								</div>
+							</div>
+							<div id="nonStandardDateInput" class="d-none col-sm-12 mb-2 justify-content-center">
+								<div class="row">
+									<div class="col-sm-12">
+										<label for="beginDateInput">Data początkowa</label>
+										<input type="date" id="beginDateInput" name="beginnigTimeSpan" class="form-control">
+									</div>
+									<div class="col-sm-12">
+										<label for="endingDateInput">Data końcowa</label>
+										<input type="date" id="endingDateInput" name="endingTimeSpan" class="form-control">
+									</div>
+									
+								</div>	
+							</div>
+							<div class="col-sm-12 text-danger text-center light-input-bg" id="dateMessageDiv">
+							</div>
+							<div class="col-sm-12 mb-2">
+								<button type="button" class="btn btn-success btn-block" id="generateSummaryButton">Generuj tabele</button>
+							</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="row justify-content-center">
+					<div class="col-sm-10">
+						<div class="row">
+							<div class="col-sm-12">
+								<h4 class="mb-3 text-center" id="expenceTableHeader"></h4>
+								<table id="expenceTable" class="table table-sm table-dark table-striped table-hover">
+								
+								</table>
+								<h4 class="mb-3 text-center" id="expenceCategoriesTableHeader">
+								</h4>
+								<table id="expenceCategoriesTable" class="table table-sm table-dark table-striped table-hover">
+								
+								</table>
+							</div>
+							<div class="col-sm-12">
+							<h4 class="mb-3 text-center" id="incomeTableHeader"></h4>
+								<table id="incomeTable" class="table table-sm table-dark table-striped table-hover">
+								
+								</table>
+								<h4 class="mb-3 text-center" id="incomeCategoriesTableHeader"></h4>
+								<table id="incomeCategoriesTable" class="table table-sm table-dark table-striped table-hover">										
+								</table>
+							</div>
+							
+							<div class="col-sm-12">
+								<div id="chartExpencesContainer"></div>
+							</div>
+							<div class="col-sm-12 text-center mb-2 pt-2" id="showEvaluation">									
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>			
+	</div>
+	
+{% endblock %}
