@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Summary{% endblock %}
+{% block footer %}
+	<script src="/js/setup.js"></script>
+{% endblock %}
+{% block body %}
+		
+	<div class="col-sm-12">		
+		
+		<div class="row h-500" id="setupContainer">
+			<div class="col-sm-12">
+				<div class="row justify-content-center my-3">
+					<div class="col-sm-12 my-3">
+						<h4 class="text-center"><b>Strona umożliwiająca dostosowanie ustawień aplikacji</b></h4>
+					</div>
+					<div class="col-md-4 col-sm-12" id="functionList">
+						<div class="list-group">
+							<button class="list-group-item list-group-item-action btn text-white bg-secondary" type="button" id="listLoginChange">Zmiana danych logowania</button>
+							<button class="list-group-item list-group-item-action btn text-white bg-secondary" type="button" id="listExpenceChange">Zmiana menu wydatków</button>
+							<button class="list-group-item list-group-item-action btn text-white bg-secondary" type="button" id="listIncomeChange">Zmiana menu dochodów</button>
+							<button class="list-group-item list-group-item-action btn text-white bg-secondary" type="button" id="listLastInputsDelete">Usuwanie wybranych wpisów</button>
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-12" id="setupFunction">
+						<div class="row">
+							<div class="col-sm-12 d-none" id="loginSetup">
+								<div class="row justify-content-center">
+									<div class="col-sm-12">
+										<label for="loginChange" class="my-2">Zmiana loginu użytkownika: </label>
+										<div class="input-group">
+											<input type="text" class="form-control mr-3" id="loginChange">
+											<button class="btn btn-success" id="changeLoginButton"><span class="fa fa-save"></span> Zmień login</button>
+										</div>
+									</div>												
+									<div class="col-sm-12">
+										<label for="passwordChange" class="my-2">Zmiana hasła użytkownika: </label>
+										<div class="input-group">
+											<input type="text" id="passwordChange" class="form-control mr-3">
+											<button class="btn btn-success" id="changePasswordButton"><span class="fa fa-save"></span> Zmień hasło</button>
+										</div>
+									</div>											
+									<div class="col-sm-12">
+										<label for="emailChange" class="my-2">Zmiana emailu użytkownika: </label>
+										<div class="input-group">
+											<input type="text" id="emailChange" class="form-control mr-3">
+											<button class="btn btn-success" id="changeEmailButton"><span class="fa fa-save"></span> Zmień email</button>
+										</div>
+									</div>
+									<div class="col-sm-12 text-primary align-items-center text-center" id="functionMessage-loginSetup"></div>
+								</div>
+								
+							</div>
+
+							<div class="col-sm-12 d-none" id="expenceMenuSetup">
+								<div class="row justify-content-center">
+									<div class="col-sm-12">
+										<label for="addPayment" class="my-2">Dodawanie nowej metody płatności: </label>
+									</div>
+									<div class="col-sm-12 input-group">
+											<input type="text" class="form-control mr-3" id="addPayment">
+											<button class="btn btn-success" id="addPaymentWayButton"><span class="fa fa-save"></span> Dodaj metodę</button>
+									</div>
+								
+									<div class="col-sm-12">
+										<h5 class="my-2">Usuwanie metody płatności: </h5>
+									</div>
+									<div class="col-sm-12" id="expenceMethodDelete">-</div>
+									<div class="col-sm-12 input-group">
+										<button class="btn btn-success btn-block" id="deleteMethodButton"><span class="fa fa-save"></span> Usuń metodę</button>
+									</div>
+									
+									<div class="col-sm-12 my-2">
+										<h5>Dodawanie nowej kategorii platności: </h5>
+									</div>
+									<div class="col-sm-12 input-group">
+											<input type="text" class="form-control mr-3" id="addExpenceCathegory">
+											<button class="btn btn-success" id="addExpenceCathegoryButton"><span class="fa fa-save"></span> Dodaj kategorię</button>
+									</div>
+									
+									<div class="col-sm-12">
+										<h5 class="my-2">Usuwanie kategorii płatności: </h5>
+									</div>
+									<div class="col-sm-12 mb-3" id="expenceCathegoryDelete">-</div>
+									<div class="col-sm-12 input-group">
+										<button class="btn btn-success btn-block" id="deleteExpenceCathegoryButton"><span class="fa fa-save"></span> Usuń kategorię</button>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 d-none" id="incomeMenuSetup">
+								<div class="row justify-content-center">
+									<div class="col-sm-12">
+										<h5>Dodawanie nowej kategorii dochodu: </h5>
+									</div>
+									<div class="col-sm-12 input-group">
+											<input type="text" class="form-control mr-3" id="addIncomeCathegoryTextInput">
+											<button class="btn btn-success" id="addIncomeCathegoryButton"><span class="fa fa-save"></span> Dodaj nowa metodę</button>
+									</div>
+									<div class="col-sm-12">
+										<h5 class="my-2">Usuwanie kategorii dochodu: </h5>
+									</div>
+									<div class="col-sm-12 mb-3" id="incomeCathegoryDelete">-</div>
+									<div class="col-sm-12 input-group">
+										<button class="btn btn-success btn-block" id="deleteIncomeCathegoryButton"><span class="fa fa-save"></span> Usuń kategorię</button>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 d-none" id="lastInputsMenuSetup">
+								<div class="row justify-content-center">
+									<div class="col-sm-12">
+										<h5><b>Usuwanie ostatnio dodanych przychodów:</b></h5>
+									</div>
+									<div class="col-sm-12 text-center mb-3" id="lastIncomesLoaded">
+									</div>
+									<div class="col-sm-12">
+										<button class="btn btn-success btn-block" id="deleteIncomeInLocalStorageButton"><span class="fa fa-trash-o"></span> Usuń dochód</button>
+									</div>
+									<div class="col-sm-12">
+										<h5><b>Usuwanie ostatnio dodanych wydatków</b></h5>
+									</div>
+									<div class="col-sm-12 text-center mb-3" id="lastExpencesLoaded">
+									</div>
+									<div class="col-sm-12">
+										<button class="btn btn-success btn-block" id="deleteExpenceInLocalStorageButton"><span class="fa fa-trash-o"></span> Usuń wydatek</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
