@@ -43,9 +43,9 @@
 		$user_id = $this->user->id;
 		
 		$expenses = Expense::getLoggedUserExpenses($user_id, $_GET);
-		
+	
 		echo json_encode($expenses);
-		//var_dump($expenses);
+		
 	}
 	/**
 	*

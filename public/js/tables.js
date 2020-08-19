@@ -58,7 +58,7 @@ function generateStandardSpanSummary(dateSpan){
 		var sumOfExpences = 0;
 		var sumOfIncomes = 0;
 			$.get("/Summary/expencesTables", {timePeriod: dateSpan} , function(json){
-				generateExpenceTable(json);								
+				generateExpenceTable(json);				
 			});
 			$.get("/Summary/incomesTables", {timePeriod: dateSpan} , function(json){
 				generateIncomeTable(json);		
