@@ -57,17 +57,19 @@
 							<div class="col-sm-12 d-none" id="expenceMenuSetup">
 								<div class="row justify-content-center">
 									<div class="col-sm-12">
-										<label for="addPayment" class="my-2">Dodawanie nowej metody płatności: </label>
+										<h5>Dodawanie nowej metody płatności: </h5>
 									</div>
 									<div class="col-sm-12 input-group">
-											<input type="text" class="form-control mr-3" id="addPayment">
+											<input type="text" class="form-control mr-3" id="addExpencePayment">
 											<button class="btn btn-success" id="addPaymentWayButton"><span class="fa fa-save"></span> Dodaj metodę</button>
 									</div>
 								
 									<div class="col-sm-12">
 										<h5 class="my-2">Usuwanie metody płatności: </h5>
 									</div>
-									<div class="col-sm-12 mb-2" id="expenceMethodDelete"></div>
+									<div class="col-sm-12 mb-2">
+										<form id="expenceMethodDelete" class="form-group" action="#" method="post"></form>
+									</div>
 									<div class="col-sm-12 input-group">
 										<button class="btn btn-success btn-block" id="deleteMethodButton"><span class="fa fa-save"></span> Usuń metodę</button>
 									</div>
@@ -83,7 +85,9 @@
 									<div class="col-sm-12">
 										<h5 class="my-2">Usuwanie kategorii płatności: </h5>
 									</div>
-									<div class="col-sm-12 mb-3" id="expenceCathegoryDelete">-</div>
+									<div class="col-sm-12 mb-2">
+										<form class="from-group"  id="expenceCathegoryDelete"></form>
+									</div>
 									<div class="col-sm-12 input-group">
 										<button class="btn btn-success btn-block" id="deleteExpenceCathegoryButton"><span class="fa fa-save"></span> Usuń kategorię</button>
 									</div>
@@ -101,7 +105,10 @@
 									<div class="col-sm-12">
 										<h5 class="my-2">Usuwanie kategorii dochodu: </h5>
 									</div>
-									<div class="col-sm-12 mb-3" id="incomeCathegoryDelete">-</div>
+									<div class="col-sm-12 mb-3">
+									<form id="incomeCathegoryDelete" class="form-group" method="post" action="#">
+									</form>
+									</div>
 									<div class="col-sm-12 input-group">
 										<button class="btn btn-success btn-block" id="deleteIncomeCathegoryButton"><span class="fa fa-save"></span> Usuń kategorię</button>
 									</div>

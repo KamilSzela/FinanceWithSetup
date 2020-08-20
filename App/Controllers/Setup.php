@@ -42,4 +42,34 @@
 		$paymentWays = Expense::getExpencePaymentWays($user_id);		
 		echo json_encode($paymentWays);
 	 }
+	  /**
+	 * get cathegories of logged user
+	 * return json object
+	 */
+	 public function loadExpenceCathegories(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		$categories = Expense::getExpenceCathegories($user_id);		
+		echo json_encode($categories);
+	 }
+	   /**
+	 * get cathegories of logged user
+	 * return json object
+	 */
+	 public function loadIncomeCathegories(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		$categories = Income::getIncomeCathegories($user_id);		
+		echo json_encode($categories);
+	 }
+	 /**
+	 * add new expence category to the server
+	 * return boolean
+	 */
+	 public function loadIncomeCathegories(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		$categories = Expence::addNewPaymentWay($user_id, $_POST);		
+		echo json_encode($categories);
+	 }
  }
