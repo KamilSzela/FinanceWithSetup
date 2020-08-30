@@ -204,4 +204,55 @@ class Income extends \Core\Model
 	}
 		return $incomes_categories;
 	}
+	/**
+	* add new income category to users data
+	* param $user_id the user id, $category - category added by user
+	* return boolean
+	*/
+	public static function addNewCategory($user_id, $category){
+		$db = static::getDB();
+		if(!static::categoryExists($user_id, $category)){
+			$sql = "INSERT INTO incomes_category_assigned_to_users VALUES(NULL, :user_id, :category)";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':category', $category, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+			return $stmt->execute();
+		} else {
+			return false;
+		}
+	}
+	/**
+	* check if category already exists in the database
+	* param $user_id the user id, $category - category added by user
+	* @return boolean
+	*/
+	public static function categoryExists($user_id, $category){
+		$db = static::getDB();
+		$sql = "SELECT * FROM incomes_category_assigned_to_users WHERE user_id = :user_id";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+		if($stmt->rowCount()>0){
+			$results = $stmt->fetchAll();
+			foreach($results as $result){
+				if($result['name'] == $category){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
+	* remove category of expense from the database 
+	* @param $usr_id - user id $categoryID - id of category to delete
+	* @return boolean
+	*/
+	public static function removeCategory($user_id, $categoryID){
+			$db = static::getDB();
+		
+			$sql = "DELETE FROM incomes_category_assigned_to_users WHERE id = :categoryID";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':categoryID', $categoryID, PDO::PARAM_INT);
+			return $stmt->execute();
+	}
 }

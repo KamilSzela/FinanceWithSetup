@@ -203,10 +203,35 @@ function generateExpenceCathegoriesList(json){
 		$('#setupContainer').css({'height': 'auto'});
 		
 }
+
+$('#addIncomeCathegoryButton').on('click', function(){
+	var newIncomeCategory = $('#addIncomeCathegoryTextInput').val();
+	if(newIncomeCategory != ""){
+		newIncomeCategory = newIncomeCategory.substr(0,1).toUpperCase() + newIncomeCategory.substr(1).toLowerCase();
+		$.post("/Setup/addNewIncomeCategory", {newIncomeCat: newIncomeCategory}, function(data){
+			loadIncomeCathegoriesToDiv()
+			$('#incomeMenuMethodInfo').html(data);
+			$('#addIncomeCathegoryTextInput').val("");
+		});
+	} else {
+		$('#incomeMenuMethodInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie wpisano nowej metody płatności</b></p>");
+	}
+});
+$('#deleteIncomeCathegoryButton').on('click', function(){
+	var incomeCathegoryToDelete = $("input[name='incomeCatDelete']:checked").val();
+	if(incomeCathegoryToDelete){
+		$.post("/Setup/removeIncomeCategory", {toDelete: incomeCathegoryToDelete}, function(data){
+			loadIncomeCathegoriesToDiv();
+			$('#incomeMenuMethodInfo').html(data);
+		});
+	} else {
+		$('#incomeMenuMethodInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie zaznaczono kategorii do usuniecia </b></p>");
+	}
+});
 function loadIncomeCathegoriesToDiv(){
 	$.get("/Setup/loadIncomeCathegories", function(json){
-				generateIncomeCathegoriesList(json);								
-			});
+			generateIncomeCathegoriesList(json);			
+		});
 }
 function generateIncomeCathegoriesList(json){
 	var jsonObj = $.parseJSON(json);
@@ -221,7 +246,7 @@ function generateIncomeCathegoriesList(json){
 				var userId = data[1];
 				var categorie = data[2];
 								
-				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label></div>").appendTo('#incomeCathegoryDelete');             
+				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"incomeCatDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label></div>").appendTo('#incomeCathegoryDelete');             
 			}
 	}	
 		

@@ -166,4 +166,40 @@
 			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości kategorii wydatku</b></p>");
 		}
 	 }
+	 /**
+	 * add new income category to the database
+	 * @return string
+	 */
+	 public function addNewIncomeCategory(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['newIncomeCat'])){
+			$category = htmlspecialchars($_POST['newIncomeCat']);	
+			if(Income::addNewCategory($user_id, $category)){
+				echo ("<p class=\"text-success light-input-bg\"><b>Dodano nową kategorię płatności</b></p>");
+			} else {
+				echo ("<p class=\"text-danger light-input-bg\"><b>Wpisana kategoria już istnieje w bazie</b></p>");
+			}
+		} else {
+			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości kategorii dochodu</b></p>");
+		}
+	 }
+	  /**
+	 * remove income category from a database
+	 * @return string
+	 */
+	 public function removeIncomeCategory(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['toDelete'])){
+			$paymentWayID = $_POST['toDelete'];
+			if(Income::removeCategory($user_id, $paymentWayID)){
+			echo ("<p class=\"text-success light-input-bg\"><b>Usunięto kategorię dochodu</b></p>");
+			} else {
+				echo ("<p class=\"text-success light-input-bg\"><b>Wystąpił błąd podczas usuwania kategorii dochodu</b></p>");
+			}	
+		} else {
+			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości kategorii dochodu</b></p>");
+		}
+	 }
  }
