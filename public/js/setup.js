@@ -1,9 +1,10 @@
+$(document).ready(function(){
 $('#listLoginChange').on('click', function(){
 	
 	$('#loginSetup').removeClass('d-none');
 	$('#loginSetup').addClass('d-flex');
 	
-	adjustSetupContainerheight()
+	adjustSetupContainerheight();
 	
 	$('#expenceMenuSetup').removeClass('d-flex');
 	$('#expenceMenuSetup').addClass('d-none');
@@ -107,19 +108,43 @@ $('#changePasswordButton').on('click', function(){
 		}
 	}
 });
+$('#addPaymentWayButton').on('click', function(){
+	var newExpencePaymentWay = $('#addExpencePayment').val();
+	if(newExpencePaymentWay != ""){
+		newExpencePaymentWay = newExpencePaymentWay.substr(0,1).toUpperCase() + newExpencePaymentWay.substr(1).toLowerCase();
+		$.post("/Setup/addNewExpencePaymentWay", {newPaymentWay: newExpencePaymentWay}, function(data){
+			loadExpenceAttribiutesLists();
+			$('#expenceMenuMethodInfo').html(data);
+			$('#addExpencePayment').val("");
+		});
+	} else {
+		$('#expenceMenuMethodInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie wpisano nowej metody płatności</b></p>");
+	}
+});
+$('#deleteMethodButton').on('click', function(){
+	var methodToDelete = $("input[name='expencePaymentWayDelete']:checked").val();
+	if(methodToDelete){
+		$.post("/Setup/removeExpencePaymentWay", {toDelete: methodToDelete}, function(data){
+			loadExpenceAttribiutesLists();
+			$('#expenceMenuMethodInfo').html(data);
+		});
+	} else {
+		$('#expenceMenuMethodInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie zaznaczono metody do usuniecia </b></p>");
+	}
+});
 function loadExpenceAttribiutesLists(){
 	$.get("/Setup/loadExpencePaymentWays", function(json){
 				generatePaymentWaysList(json);								
 			});
 	$.get("/Setup/loadExpenceCathegories", function(json){
-				generateExpenceCathegoriesList(json);								
+				generateExpenceCathegoriesList(json);			
 			});
 }
 function generatePaymentWaysList(json){
 	var jsonObj = $.parseJSON(json);
 	$('#expenceMethodDelete').html("");
 	if(jsonObj.length == 0){
-			$('#expenceMethodDelete').html('<p class="text-center"><b>Brak metod zapłaty wydatku</b></p>');
+			$('#expenceMethodDelete').html('<p class="text-center light-input-bg"><b>Brak metod zapłaty wydatku</b></p>');
 	} else {				
 				
 		for(var key in jsonObj){
@@ -128,7 +153,7 @@ function generatePaymentWaysList(json){
 				var userId = data[1];
 				var paymentName = data[2];
 								
-				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ paymentName +"\" name=\"expenceDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+paymentName+"\">"+paymentName+"</label></div>").appendTo('#expenceMethodDelete');             
+				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ paymentName +"\" name=\"expencePaymentWayDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+paymentName+"\">"+paymentName+"</label></div>").appendTo('#expenceMethodDelete');             
 			}
 	}
 	
@@ -182,3 +207,4 @@ function adjustSetupContainerheight(){
 	let stringHeight = windowHeight.toString() +"px";
 	$('#setupContainer').css({'height': stringHeight});	
 }
+});

@@ -227,4 +227,56 @@ class Expense extends \Core\Model
 		}
 		return $expenses_categories;
 	}
+	/**
+	* add new payment way to the database 
+	* @param $usr_id - user id $newPaymentWay - payment way added by user
+	* @return boolean
+	*/
+	public static function addNewPaymentWay($user_id, $newPaymentWay){		
+			if(static::paymentExists($user_id,$newPaymentWay) == false){
+				$db = static::getDB();
+				$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :name)";
+				$stmt = $db->prepare($sql);
+				$stmt->bindValue(':name', $newPaymentWay, PDO::PARAM_STR);
+				$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+				return $stmt->execute();			
+			} else {
+				return false;
+			}				
+	}
+	/**
+	* check if payment way assigned to the user exists in the database 
+	* @param $usr_id - user id $newPaymentWay - payment way added by user
+	* @return boolean
+	*/
+	public static function paymentExists($user_id,$newPaymentWay){
+		$db = static::getDB();
+		$sql = "SELECT * FROM payment_methods_assigned_to_users WHERE user_id = :user_id";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+		if($stmt->rowCount()>0){
+			$results = $stmt->fetchAll();
+			foreach($results as $result){
+				if($result['name'] == $newPaymentWay){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
+	* remove new payment way from the database 
+	* @param $usr_id - user id $newPaymentWay - payment way added by user
+	* @return boolean
+	*/
+	public static function removePaymentWay($user_id, $paymentWayID){
+			$db = static::getDB();
+			
+			$sql = "DELETE FROM payment_methods_assigned_to_users WHERE id = :paymentWayID";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':paymentWayID', $paymentWayID, PDO::PARAM_INT);
+			return $stmt->execute();
+			
+	}
 }

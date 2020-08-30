@@ -64,16 +64,6 @@
 		echo json_encode($categories);
 	 }
 	 /**
-	 * add new expence category to the server
-	 * return boolean
-	 */
-	 public function addNewExpencePaymentWay(){
-		$this->user = Auth::getUser();		
-		$user_id = $this->user->id;	
-		$categories = Expence::addNewPaymentWay($user_id, $_POST);		
-		echo json_encode($categories);
-	 }
-	 /**
 	 * change login of logged user
 	 * return string
 	 */
@@ -105,5 +95,39 @@
 		 $user_id = $this->user->id;		
 		 $response = User::changePassword($password, $user_id);
 		 echo $response;
+	 }
+	  /**
+	 * add new expence category to the server
+	 * return string
+	 */
+	 public function addNewExpencePaymentWay(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['newPaymentWay'])){
+			$paymentWay = htmlspecialchars($_POST['newPaymentWay']);
+			 if(Expense::addNewPaymentWay($user_id, $paymentWay)){		
+				echo ("<p class=\"text-success light-input-bg\"><b>Dodano nową metodę płatności</b></p>");
+			 } else {
+				echo ("<p class=\"text-danger light-input-bg\"><b>Wystąpił błąd przy dodawaniu nowej metody do bazy danych lub wpisana metoda już istnieje w bazie</b></p>");
+			 }
+		} 
+	 }
+	  /**
+	 * remove expense category
+	 * return string
+	 */
+	 public function removeExpencePaymentWay(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['toDelete'])){
+			$paymentWayID = $_POST['toDelete'];
+			if(Expense::removePaymentWay($user_id, $paymentWayID)){
+				echo ("<p class=\"text-success light-input-bg\"><b>Usunięto metodę płatności</b></p>");
+			} else {
+				echo ("<p class=\"text-danger light-input-bg\"><b>Wystapił błąd przy usuwaniu metody płatności</b></p>");
+			}
+		} else {
+			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości metody płatności</b></p>");
+		}
 	 }
  }
