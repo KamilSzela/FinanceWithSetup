@@ -5,6 +5,7 @@
  use \Core\View;
  use \App\Auth;
  use \App\Flash;
+ use \App\Models\User;
  use \App\Models\Income;
  use \App\Models\Expense;
  /**
@@ -66,10 +67,43 @@
 	 * add new expence category to the server
 	 * return boolean
 	 */
-	 public function loadIncomeCathegories(){
+	 public function addNewExpencePaymentWay(){
 		$this->user = Auth::getUser();		
 		$user_id = $this->user->id;	
 		$categories = Expence::addNewPaymentWay($user_id, $_POST);		
 		echo json_encode($categories);
+	 }
+	 /**
+	 * change login of logged user
+	 * return string
+	 */
+	 public function changeLogin(){
+		 $login = $_POST["newLogin"];
+		 $this->user = Auth::getUser();	
+		 $user_id = $this->user->id;		
+		 $response = User::changeLogin($login, $user_id);
+		 echo $response;
+	 }
+	 /**
+	 * change email of logged user
+	 * return string
+	 */
+	 public function changeEmail(){
+		 $email = $_POST["newEmail"];
+		 $this->user = Auth::getUser();	
+		 $user_id = $this->user->id;		
+		 $response = User::changeEmail($email, $user_id);
+		 echo $response;
+	 }
+	 /**
+	 * change password of logged user
+	 * return string
+	 */
+	 public function changePassword(){
+		 $password = $_POST["newPassword"];
+		 $this->user = Auth::getUser();	
+		 $user_id = $this->user->id;		
+		 $response = User::changePassword($password, $user_id);
+		 echo $response;
 	 }
  }

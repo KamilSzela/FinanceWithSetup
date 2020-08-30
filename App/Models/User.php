@@ -332,40 +332,74 @@ class User extends \Core\Model
 		$stmt->execute();
 	}
 	/**
-	* update the user's profile
-	* @param array $data data from edit profile form
-	* @return boolean True if the data was updated false otherwise
+	* change login of logged user
+	* param @login - user login @user_id - user id
+	* @return string
 	*/
-	public function updateProfile($data){
-		$this->name = $data['name'];
-		$this->email = $data['email'];
-		if($data['password'] != ''){
-			$this->password = $data['password'];
-		}
+	public static function changeLogin($login, $user_id){
 		
-		$this->validate();
-		
-		if(empty($this->errors)){
-			$sql = 'UPDATE users 
-				SET name = :name,
-					email = :email';
-			if(isset($this->password)){
-				$sql .= ', password_hash = :password_hash';
-			}
+		if(static::findByID($user_id) == true){
 			
-			$sql .=	' WHERE id = :id'; 				
+			$sql = 'UPDATE users 
+				SET name = :name
+				WHERE id = :user_id';
 			$db = static::getDB();
 			$stmt = $db->prepare($sql);
-			$stmt->bindValue(':name', $this->name, PDO::PARAM_STR);
-			$stmt->bindValue(':email', $this->email, PDO::PARAM_STR);
-			$stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
-			
-			if(isset($this->password)){
-				$password_hash = password_hash($this->password, PASSWORD_DEFAULT);
-				$stmt->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
-			}
-			return $stmt->execute();
+			$stmt->bindValue(':name', $login, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+			$stmt->execute();
+			return '<p class="text-success light-input-bg"><b>Zmieniono nazwe użytkownika</b></p>';
+		} else {
+			return '<p class="text-danger light-input-bg"><b>Wystąpił bład przy wprowadzaniu do bazy</b></p>';
 		}
-		return false;
+	}
+	/**
+	* change email of logged user
+	* param @email - user email @user_id - user id
+	* @return string
+	*/
+	public static function changeEmail($email, $user_id){
+		if(filter_var($email, FILTER_VALIDATE_EMAIL) === false){
+		  return '<p class="text-danger light-input-bg"><b>Niepoprawny adres email</b></p>';
+		}		
+		if(static::findByEmail($email) == false){
+			
+			$sql = 'UPDATE users 
+				SET email = :email 
+				WHERE id = :user_id';
+			$db = static::getDB();
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':email', $email, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+			$stmt->execute();
+			return '<p class="text-success light-input-bg"><b>Zmieniono adres email</b></p>';
+		} else {
+			return '<p class="text-danger light-input-bg"><b>Wystąpił bład przy wprowadzaniu do bazy</b></p>';
+		}
+	}
+	/**
+	* change password of logged user
+	* param @password - user's new password @user_id - user id
+	* @return string
+	*/
+	public static function changePassword($password, $user_id){
+		
+		if(static::findByID($user_id) == true){
+			
+			$sql = 'UPDATE users 
+				SET password_hash = :password_hash
+				WHERE id = :user_id';
+			
+			$password_hash = password_hash($password, PASSWORD_DEFAULT);
+			
+			$db = static::getDB();
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+			$stmt->execute();
+			return '<p class="text-success light-input-bg"><b>Ustawiono nowe hasło</b></p>';
+		} else {
+			return '<p class="text-danger light-input-bg"><b>Wystąpił bład przy wprowadzaniu do bazy</b></p>';
+		}
 	}
 }

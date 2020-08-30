@@ -66,21 +66,46 @@ $('#listLastInputsDelete').on('click', function(){
 	
 	adjustSetupContainerheight();
 });
-$('#addPaymentWayButton').on('click', function(){
-	var newExpencePaymentWay = $('#addExpencePayment').value();
-	$.ajax({
-		url         : "/Setup/addNewExpencePaymentWay", //gdzie się łączymy
-		method      : "post", //typ połączenia, domyślnie get
-		dataType    : "boolean", //typ danych jakich oczekujemy w odpowiedzi
-
-		contentType : "application/string", //gdy wysyłamy dane czasami chcemy ustawić ich typ
-		data        : { //dane do wysyłki
-			name : newExpencePaymentWay
-		})
-		success: function(response){
-			
+$('#changeLoginButton').on('click', function(){
+	
+	const newChangeLogin = $('#loginChange').val();
+	if(newChangeLogin != ""){
+		$.post("/Setup/changeLogin", {newLogin: newChangeLogin}, function(data){			
+			$('#functionMessage-loginSetup').html(data);
+			$('#loginChange').val("");
+		});
+	} else {
+		$('#functionMessage-loginSetup').html("<p class=\"text-danger light-input-bg\"><b>Nie wpisano nowej nazwy konta</b></p>");
+	}
+});
+$('#changeEmailButton').on('click', function(){
+	
+	const newChangeEmail = $('#emailChange').val();
+	if(newChangeEmail != ""){
+		$.post("/Setup/changeEmail", {newEmail: newChangeEmail}, function(data){			
+			$('#functionMessage-loginSetup').html(data);
+			$('#emailChange').val("");
+		});
+	} else {
+		$('#functionMessage-loginSetup').html("<p class=\"text-danger light-input-bg\"><b>Nie wpisano nowego adresu Email</b></p>");
+	}
+});
+$('#changePasswordButton').on('click', function(){
+	
+	var newChangePassword = $('#passwordChange').val();
+	if(newChangePassword.length < 6){
+		$('#functionMessage-loginSetup').html("<p class=\"text-danger light-input-bg\"><b>Hasło musi skladać się z co najmniej 6 znaków</b></p>");
+	} else {
+		var pattern = /[A-Za-z]+\d+/;
+		if(pattern.test(newChangePassword)){			
+				$.post("/Setup/changePassword", {newPassword: newChangePassword}, function(data){			
+					$('#functionMessage-loginSetup').html(data);
+					$('#passwordChange').val("");
+				});			
+		} else {
+			$('#functionMessage-loginSetup').html("<p class=\"text-danger light-input-bg\"><b>Hasło musi zawierać co najmniej jedną literę i jedną cyfrę</b></p>");
 		}
-	});
+	}
 });
 function loadExpenceAttribiutesLists(){
 	$.get("/Setup/loadExpencePaymentWays", function(json){
