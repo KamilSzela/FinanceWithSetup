@@ -108,7 +108,7 @@
 			 if(Expense::addNewPaymentWay($user_id, $paymentWay)){		
 				echo ("<p class=\"text-success light-input-bg\"><b>Dodano nową metodę płatności</b></p>");
 			 } else {
-				echo ("<p class=\"text-danger light-input-bg\"><b>Wystąpił błąd przy dodawaniu nowej metody do bazy danych lub wpisana metoda już istnieje w bazie</b></p>");
+				echo ("<p class=\"text-danger light-input-bg\"><b>Wpisana metoda już istnieje w bazie</b></p>");
 			 }
 		} 
 	 }
@@ -128,6 +128,42 @@
 			}
 		} else {
 			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości metody płatności</b></p>");
+		}
+	 }
+	 /**
+	 * add new expense catheogry to database
+	 * return string
+	 */
+	 public function addNewExpenseCategory(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['newExpenseCat'])){
+			$category = htmlspecialchars($_POST['newExpenseCat']);
+			if(Expense::addNewCategory($user_id, $category)){		
+				echo ("<p class=\"text-success light-input-bg\"><b>Dodano nową kategorię płatności</b></p>");
+			} else {
+				echo ("<p class=\"text-danger light-input-bg\"><b>Wpisana kategoria już istnieje w bazie</b></p>");
+			}
+		} else {
+			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości kategorii wydatku</b></p>");
+		}
+	 }
+	 /**
+	 * remove expense category from a database
+	 * @return string
+	 */
+	 public function removeExpenceCategory(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['toDelete'])){
+			$paymentWayID = $_POST['toDelete'];
+			if(Expense::removeCategory($user_id, $paymentWayID)){
+			echo ("<p class=\"text-success light-input-bg\"><b>Usunięto kategorię wydatku</b></p>");
+			} else {
+				echo ("<p class=\"text-success light-input-bg\"><b>Wystąpił błąd podczas usuwania kategorii wydatku</b></p>");
+			}	
+		} else {
+			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości kategorii wydatku</b></p>");
 		}
 	 }
  }

@@ -132,6 +132,30 @@ $('#deleteMethodButton').on('click', function(){
 		$('#expenceMenuMethodInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie zaznaczono metody do usuniecia </b></p>");
 	}
 });
+$('#addExpenceCathegoryButton').on('click', function(){
+	var newExpenseCategory = $('#addExpenceCathegory').val();
+	if(newExpenseCategory != ""){
+		newExpenseCategory = newExpenseCategory.substr(0,1).toUpperCase() + newExpenseCategory.substr(1).toLowerCase();
+		$.post("/Setup/addNewExpenseCategory", {newExpenseCat: newExpenseCategory}, function(data){
+			loadExpenceAttribiutesLists()
+			$('#expenceMenuCatInfo').html(data);
+			$('#addExpenceCathegory').val("");
+		});
+	} else {
+		$('#expenceMenuCatInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie wpisano nowej kategorii wydatku</b></p>");
+	}
+});
+$('#deleteExpenceCathegoryButton').on('click', function(){
+	var categoryToDelete = $("input[name='expenceCategoryListDelete']:checked").val();
+	if(categoryToDelete){
+		$.post("/Setup/removeExpenceCategory", {toDelete: categoryToDelete}, function(data){
+			loadExpenceAttribiutesLists();
+			$('#expenceMenuCatInfo').html(data);
+		});
+	} else {
+		$('#expenceMenuCatInfo').html("<p class=\"text-danger light-input-bg\"><b>Nie zaznaczono kategorii do usuniecia </b></p>");
+	}
+});
 function loadExpenceAttribiutesLists(){
 	$.get("/Setup/loadExpencePaymentWays", function(json){
 				generatePaymentWaysList(json);								
@@ -173,7 +197,7 @@ function generateExpenceCathegoriesList(json){
 				var userId = data[1];
 				var categorie = data[2];
 								
-				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label></div>").appendTo('#expenceCathegoryDelete');             
+				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceCategoryListDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label></div>").appendTo('#expenceCathegoryDelete');             
 			}
 	}	
 		$('#setupContainer').css({'height': 'auto'});

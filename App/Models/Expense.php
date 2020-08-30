@@ -267,7 +267,7 @@ class Expense extends \Core\Model
 	}
 	/**
 	* remove new payment way from the database 
-	* @param $usr_id - user id $newPaymentWay - payment way added by user
+	* @param $usr_id - user id $paymentWayID - payment way id to remove
 	* @return boolean
 	*/
 	public static function removePaymentWay($user_id, $paymentWayID){
@@ -276,7 +276,59 @@ class Expense extends \Core\Model
 			$sql = "DELETE FROM payment_methods_assigned_to_users WHERE id = :paymentWayID";
 			$stmt = $db->prepare($sql);
 			$stmt->bindValue(':paymentWayID', $paymentWayID, PDO::PARAM_INT);
-			return $stmt->execute();
+			return $stmt->execute();			
+	}
+	/**
+	* add new category to the database 
+	* @param $usr_id - user id $category - category way added by user
+	* @return boolean
+	*/
+	public static function addNewCategory($user_id, $category){
+		if(!static::checkIfCategoryAlreadyExists($user_id, $category)){
+			$db = static::getDB();
+		
+			$sql = "INSERT INTO expenses_category_assigned_to_users VALUES(NULL, :user_id, :category)";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':category', $category, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 			
+			return $stmt->execute();
+		} else {
+			return false;
+		}
+	}
+	/**
+	* check if category assigned to the user exists in the database 
+	* @param $usr_id - user id $category - category added by user
+	* @return boolean
+	*/
+	public static function checkIfCategoryAlreadyExists($user_id, $category){
+		$db = static::getDB();
+		$sql = "SELECT * FROM expenses_category_assigned_to_users WHERE user_id = :user_id";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+		if($stmt->rowCount()>0){
+			$results = $stmt->fetchAll();
+			foreach($results as $result){
+				if($result['name'] == $category){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
+	* remove category of expense from the database 
+	* @param $usr_id - user id $categoryID - id of category to delete
+	* @return boolean
+	*/
+	public static function removeCategory($user_id, $categoryID){
+			$db = static::getDB();
+		
+			$sql = "DELETE FROM expenses_category_assigned_to_users WHERE id = :categoryID";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':categoryID', $categoryID, PDO::PARAM_INT);
+			return $stmt->execute();
 	}
 }
