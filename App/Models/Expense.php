@@ -287,7 +287,7 @@ class Expense extends \Core\Model
 		if(!static::checkIfCategoryAlreadyExists($user_id, $category)){
 			$db = static::getDB();
 		
-			$sql = "INSERT INTO expenses_category_assigned_to_users VALUES(NULL, :user_id, :category)";
+			$sql = "INSERT INTO expenses_category_assigned_to_users VALUES(NULL, :user_id, :category, NULL, NULL)";
 			$stmt = $db->prepare($sql);
 			$stmt->bindValue(':category', $category, PDO::PARAM_STR);
 			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);

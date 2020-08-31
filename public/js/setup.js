@@ -251,6 +251,48 @@ function generateIncomeCathegoriesList(json){
 	}	
 		
 }
+$('#setLimitExpenceCathegoryButton').on('click', function(){
+	$.get("/Setup/loadExpenceCathegories", function(json){
+			loadUserCategoriesToSelectList(json);			
+		});
+	
+});
+function loadUserCategoriesToSelectList(json){
+	var jsonObj = $.parseJSON(json);
+	$('#limit_message').html("");
+	$('#selectExpenseOption').html("");
+	if(jsonObj.length == 0){
+			$('#limit_message').html('<p class="text-center"><b>Brak aktualnych kategorii wydatku</b></p>');
+	} else {				
+		var string = "<div class=\"input-group-prepend\"> <label class=\"input-group-text\" for=\"selectExpense\">Wybierz kategorię:</label></div><select class=\"custom-select\" id=\"selectExpense\">";
+
+		for(var key in jsonObj){
+				var data = jsonObj[key];      
+				var id = data[0];
+				var userId = data[1];
+				var categorie = data[2];
+				string += "<option value="+ id +">"+categorie+"</option>";				             
+			}
+			string += "</select>";
+			$(string).appendTo('#selectExpenseOption');
+	}			
+};
+$('#sendLimitButton').on('click', function(){
+	var limit = $('#limitAmount').val();
+	if(limit != ""){
+			
+		$('#limit_message').html("");
+		var pattern = /[^\d,.]+/;
+		
+		if(pattern.test(limit)){
+			$('#limit_message').html('<p class="text-center text-danger"><b>Kwota powinna się składać jedynie z cyfr i przecinka</b></p>');
+		} else {
+			$('#limit_message').html('<p class="text-center"><b>Poprawne dane</b></p>');
+		}
+	} else {
+		$('#limit_message').html('<p class="text-center"><b>Nie wpisano kwoty ustawianego limitu</b></p>');
+	}
+});
 function adjustSetupContainerheight(){
 	let windowHeight = $(window).height() - 70;
 	let stringHeight = windowHeight.toString() +"px";

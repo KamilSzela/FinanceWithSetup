@@ -92,8 +92,36 @@
 									<div class="col-sm-12 mb-2">
 										<form class="from-group"  id="expenceCathegoryDelete"></form>
 									</div>
-									<div class="col-sm-12 input-group">
+									<div class="col-sm-12 input-group mb-2">
 										<button class="btn btn-success btn-block" id="deleteExpenceCathegoryButton"><span class="fa fa-save"></span> Usuń kategorię</button>
+									</div>
+									<div class="col-sm-12 input-group">
+										<button class="btn btn-success btn-block" id="setLimitExpenceCathegoryButton"  data-toggle="modal" data-target="#limitsModal"><span class="fa fa-sliders"></span> Dodaj limit na kategorię</button>
+									</div>
+									<div class="modal fade" id="limitsModal" tabindex="-1" role="dialog">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title">Wprowadzanie limitu na kategorię</h5>
+													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+												</div>
+												<div class="modal-body">
+													<div id="selectExpenseOption" class="mb-2">
+													</div>
+													<div class="input-group">
+														<input type="text" class="form-control" placeholder="Podaj limit w ramach kategorii" id="limitAmount">
+														<div class="input-group-append">
+															<span class="input-group-text"> PLN </span>
+														</div>
+													</div>
+													<div id="limit_message" class="align-items-center">
+													</div>
+												</div>
+												<div class="modal-footer mt-3">
+													<button type="button" class="btn btn-success" id="sendLimitButton">Wprowadź limit</button>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
