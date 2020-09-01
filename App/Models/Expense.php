@@ -331,4 +331,25 @@ class Expense extends \Core\Model
 			$stmt->bindValue(':categoryID', $categoryID, PDO::PARAM_INT);
 			return $stmt->execute();
 	}
+	public static function setExpenseLimit($catID, $limit){
+			$db = static::getDB();
+		
+			$dayOfMonth = date("d");
+			$month = date("m");
+			$d=strtotime("- ".$dayOfMonth."Days");
+			$beginningOfMonth = date("Y-m-d", $d);
+			$d2 = strtotime($beginningOfMonth . "+1Months");
+			$beginningOfNextMonth = date("Y-m-d",$d2);
+		
+			$sql = "DELETE FROM expenses_category_assigned_to_users WHERE id = :categoryID";
+			$sql = 'UPDATE expenses_category_assigned_to_users 
+			SET category_limit = :limit, limit_expiry = :date 
+			WHERE id = :id';
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':limit', $limit, PDO::PARAM_STR);
+			$stmt->bindValue(':date', $beginningOfNextMonth, PDO::PARAM_STR);
+			$stmt->bindValue(':id', $catID, PDO::PARAM_INT);
+			
+			return $stmt->execute();
+	}
 }

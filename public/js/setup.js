@@ -264,7 +264,7 @@ function loadUserCategoriesToSelectList(json){
 	if(jsonObj.length == 0){
 			$('#limit_message').html('<p class="text-center"><b>Brak aktualnych kategorii wydatku</b></p>');
 	} else {				
-		var string = "<div class=\"input-group-prepend\"> <label class=\"input-group-text\" for=\"selectExpense\">Wybierz kategorię:</label></div><select class=\"custom-select\" id=\"selectExpense\">";
+		var string = "<div class=\"input-group-prepend w-100\"> <label class=\"input-group-text\" for=\"selectExpense\">Wybierz kategorię:</label></div><select class=\"custom-select\" id=\"selectExpense\">";
 
 		for(var key in jsonObj){
 				var data = jsonObj[key];      
@@ -279,20 +279,43 @@ function loadUserCategoriesToSelectList(json){
 };
 $('#sendLimitButton').on('click', function(){
 	var limit = $('#limitAmount').val();
+
 	if(limit != ""){
-			
-		$('#limit_message').html("");
+		$('#limit_message').html("");	
 		var pattern = /[^\d,.]+/;
 		
 		if(pattern.test(limit)){
+			// check for non digit character and dot
 			$('#limit_message').html('<p class="text-center text-danger"><b>Kwota powinna się składać jedynie z cyfr i przecinka</b></p>');
-		} else {
-			$('#limit_message').html('<p class="text-center"><b>Poprawne dane</b></p>');
+		} else {						
+			limit = replaceCommaWithDot(limit);
+			// check for more than one dot
+			if(checkForMoreThanOneDot(limit)){
+				$('#limit_message').html('<p class="text-center text-danger"><b>Wprowadzono więcej niż jedną kropke lub przecinek</b></p>');
+				return;
+			} else {
+				//correcr daata
+				var categoryForLimit = $("#selectExpense").val();
+				$.post("/Setup/setExpenseLimit", {limit: limit, idCat: categoryForLimit}, function(data){					
+					$('#limit_message').html(data);					
+				});
+			}
 		}
 	} else {
-		$('#limit_message').html('<p class="text-center"><b>Nie wpisano kwoty ustawianego limitu</b></p>');
+		$('#limit_message').html('<p class="text-center text-danger"><b>Nie wpisano kwoty wprowadzanego limitu</b></p>');
 	}
 });
+function replaceCommaWithDot(string){
+	return string.replace(/\,+/gm, ".");
+}
+function checkForMoreThanOneDot(string){
+	let count=0;
+	for(let i=0; i<string.length; i++){
+		if(string[i]=='.') count++;
+	}
+	if(count>1) return true;
+	else return false;
+}
 function adjustSetupContainerheight(){
 	let windowHeight = $(window).height() - 70;
 	let stringHeight = windowHeight.toString() +"px";

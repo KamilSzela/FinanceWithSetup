@@ -202,4 +202,23 @@
 			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości kategorii dochodu</b></p>");
 		}
 	 }
+	 /**
+	 * set limit for expense category
+	 * @return string
+	 */
+	 public function setExpenseLimit(){
+		$this->user = Auth::getUser();		
+		$user_id = $this->user->id;	
+		if(isset($_POST['limit'])){
+			$limit = $_POST['limit'];
+			$catID = $_POST['idCat'];
+			if(Expense::setExpenseLimit($catID, $limit)){
+			echo ("<p class=\"text-success light-input-bg\"><b>Wprowadzono miesięczny limit w kategorii</b></p>");
+			} else {
+				echo ("<p class=\"text-success light-input-bg\"><b>Wystąpił błąd podczas wprowadzania limitu</b></p>");
+			}	
+		} else {
+			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości limitu dochodu</b></p>");
+		}
+	 }
  }

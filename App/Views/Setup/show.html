@@ -99,26 +99,28 @@
 										<button class="btn btn-success btn-block" id="setLimitExpenceCathegoryButton"  data-toggle="modal" data-target="#limitsModal"><span class="fa fa-sliders"></span> Dodaj limit na kategorię</button>
 									</div>
 									<div class="modal fade" id="limitsModal" tabindex="-1" role="dialog">
-										<div class="modal-dialog" role="document">
-											<div class="modal-content">
-												<div class="modal-header">
+										<div class="modal-dialog row" role="document">
+											<div class="modal-content col-sm-12">
+												<div class="modal-header row">
 													<h5 class="modal-title">Wprowadzanie limitu na kategorię</h5>
 													<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 												</div>
-												<div class="modal-body">
-													<div id="selectExpenseOption" class="mb-2">
+												<div class="modal-body row">
+													<div id="selectExpenseOption" class="input-group mb-2 col-sm-12">
 													</div>
-													<div class="input-group">
+													<div class="input-group col-sm-12">
 														<input type="text" class="form-control" placeholder="Podaj limit w ramach kategorii" id="limitAmount">
 														<div class="input-group-append">
 															<span class="input-group-text"> PLN </span>
 														</div>
 													</div>
-													<div id="limit_message" class="align-items-center">
+													<div id="limit_message" class="align-items-center col-sm-12 my-2">
 													</div>
 												</div>
-												<div class="modal-footer mt-3">
-													<button type="button" class="btn btn-success" id="sendLimitButton">Wprowadź limit</button>
+												<div class="modal-footer row">
+													<div class="col-sm-12">
+														<button type="button" class="btn btn-success w-100" id="sendLimitButton">Wprowadź limit</button>
+													</div>
 												</div>
 											</div>
 										</div>
