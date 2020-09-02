@@ -190,20 +190,30 @@ function generateExpenceCathegoriesList(json){
 	if(jsonObj.length == 0){
 			$('#expenceCathegoryDelete').html('<p class="text-center"><b>Brak aktualnych kategorii wydatku</b></p>');
 	} else {				
-				
+			var string = "";
 		for(var key in jsonObj){
 				var data = jsonObj[key];      
 				var id = data[0];
 				var userId = data[1];
 				var categorie = data[2];
-								
-				$("<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceCategoryListDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label></div>").appendTo('#expenceCathegoryDelete');             
+				var limit = data[3];
+				string += "<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceCategoryListDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label>";
+				if(limit !== null && limit != 0) {
+					string += "<span class=\"pull-right\">Limit ="+limit+"zł</span><span class=\"fa fa-trash trash-icon pull-right\" data-id=\""+id+"\"></span>";
+				}
+				string += "</div>";
+				$(string).appendTo('#expenceCathegoryDelete');
+				string = "";	
 			}
 	}	
-		$('#setupContainer').css({'height': 'auto'});
-		
+		$('#setupContainer').css({'height': 'auto'});	
 }
-
+$(".trash-icon").click(function(e){
+	//dlaczego nie działa onclick?
+    	handler = e.target;
+    	console.log(e);
+        alert(e.currentTarget.attributes[1].value);
+    });
 $('#addIncomeCathegoryButton').on('click', function(){
 	var newIncomeCategory = $('#addIncomeCathegoryTextInput').val();
 	if(newIncomeCategory != ""){
@@ -297,7 +307,8 @@ $('#sendLimitButton').on('click', function(){
 				//correcr daata
 				var categoryForLimit = $("#selectExpense").val();
 				$.post("/Setup/setExpenseLimit", {limit: limit, idCat: categoryForLimit}, function(data){					
-					$('#limit_message').html(data);					
+					$('#limit_message').html(data);			
+					loadExpenceAttribiutesLists();
 				});
 			}
 		}
