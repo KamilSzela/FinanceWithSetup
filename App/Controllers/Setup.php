@@ -189,11 +189,10 @@
 	 * @return string
 	 */
 	 public function removeIncomeCategory(){
-		$this->user = Auth::getUser();		
-		$user_id = $this->user->id;	
+
 		if(isset($_POST['toDelete'])){
 			$paymentWayID = $_POST['toDelete'];
-			if(Income::removeCategory($user_id, $paymentWayID)){
+			if(Income::removeCategory($paymentWayID)){
 			echo ("<p class=\"text-success light-input-bg\"><b>Usunięto kategorię dochodu</b></p>");
 			} else {
 				echo ("<p class=\"text-success light-input-bg\"><b>Wystąpił błąd podczas usuwania kategorii dochodu</b></p>");
@@ -220,5 +219,21 @@
 		} else {
 			echo ("<p class=\"text-info light-input-bg\"><b>Wystapił błąd przy przekazywaniu wartości limitu dochodu</b></p>");
 		}
+	 }
+	 /**
+	 * remove limit of given category
+	 * @return boolean
+	 */
+	 public function removeExpenseLimit(){
+		if(isset($_POST['deleteId'])){
+			$categoryID = $_POST['deleteId'];
+			if(Expense::removeCategoryLimit($categoryID)){
+				echo true;
+			} else {
+				echo false;
+			}	
+		} else {
+			echo false;
+		} 
 	 }
  }

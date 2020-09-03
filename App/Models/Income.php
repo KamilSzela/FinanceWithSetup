@@ -247,7 +247,7 @@ class Income extends \Core\Model
 	* @param $usr_id - user id $categoryID - id of category to delete
 	* @return boolean
 	*/
-	public static function removeCategory($user_id, $categoryID){
+	public static function removeCategory($categoryID){
 			$db = static::getDB();
 		
 			$sql = "DELETE FROM incomes_category_assigned_to_users WHERE id = :categoryID";

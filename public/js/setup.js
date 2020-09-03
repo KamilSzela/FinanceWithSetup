@@ -67,6 +67,7 @@ $('#listLastInputsDelete').on('click', function(){
 	
 	adjustSetupContainerheight();
 });
+
 $('#changeLoginButton').on('click', function(){
 	
 	const newChangeLogin = $('#loginChange').val();
@@ -184,6 +185,7 @@ function generatePaymentWaysList(json){
 		$('#setupContainer').css({'height': 'auto'});
 		
 }
+
 function generateExpenceCathegoriesList(json){
 	var jsonObj = $.parseJSON(json);
 	$('#expenceCathegoryDelete').html("");
@@ -199,7 +201,7 @@ function generateExpenceCathegoriesList(json){
 				var limit = data[3];
 				string += "<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceCategoryListDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label>";
 				if(limit !== null && limit != 0) {
-					string += "<span class=\"pull-right\">Limit ="+limit+"zł</span><span class=\"fa fa-trash trash-icon pull-right\" data-id=\""+id+"\"></span>";
+					string += "<span class=\"pull-right\">Limit ="+limit+"zł</span><span class=\"fa fa-trash trash-icon pull-right\" data-toggle=\"modal\" data-target=\"#confirm_modal\" data-name=\""+categorie+"\" data-id=\""+id+"\"></span>";
 				}
 				string += "</div>";
 				$(string).appendTo('#expenceCathegoryDelete');
@@ -207,13 +209,10 @@ function generateExpenceCathegoriesList(json){
 			}
 	}	
 		$('#setupContainer').css({'height': 'auto'});	
+		addOnclick();
+	
 }
-$(".trash-icon").click(function(e){
-	//dlaczego nie działa onclick?
-    	handler = e.target;
-    	console.log(e);
-        alert(e.currentTarget.attributes[1].value);
-    });
+
 $('#addIncomeCathegoryButton').on('click', function(){
 	var newIncomeCategory = $('#addIncomeCathegoryTextInput').val();
 	if(newIncomeCategory != ""){
@@ -332,4 +331,28 @@ function adjustSetupContainerheight(){
 	let stringHeight = windowHeight.toString() +"px";
 	$('#setupContainer').css({'height': stringHeight});	
 }
+function addOnclick(){
+	$('span.fa-trash').click(function(e){
+		$('#delete_limit_message').html("");
+    	handler = e.target;
+    	//console.log(e);
+		var catName = e.currentTarget.attributes[3].value;
+        var idCat = e.currentTarget.attributes[4].value;
+		$('#confirm_modal').modal('show');
+		$('#deleteLimitButton').on('click', function(){
+			
+			$.post("/Setup/removeExpenseLimit", {deleteId: idCat}, function(response){
+			if(response){
+				$('#delete_limit_message').html('<p class="text-center text-success"><b>Usunięto limit na kategorię: '+catName+'</b></p>');
+				loadExpenceAttribiutesLists();
+			} else {
+				$('#delete_limit_message').html('<p class="text-center text-success"><b>Wystapił błąd podczas usuwania limitu</b></p>');
+			}
+		});
+			
+		});
+		
+    });
+}
 });
+
