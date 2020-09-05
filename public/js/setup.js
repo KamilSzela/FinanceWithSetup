@@ -346,7 +346,7 @@ function addOnclick(){
 				$('#delete_limit_message').html('<p class="text-center text-success"><b>Usunięto limit na kategorię: '+catName+'</b></p>');
 				loadExpenceAttribiutesLists();
 			} else {
-				$('#delete_limit_message').html('<p class="text-center text-success"><b>Wystapił błąd podczas usuwania limitu</b></p>');
+				$('#delete_limit_message').html('<p class="text-center text-danger"><b>Wystapił błąd podczas usuwania limitu</b></p>');
 			}
 		});
 			

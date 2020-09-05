@@ -11,7 +11,7 @@
 				<div class="row justify-content-center" id="expenceContainer">
 						<div class="col-sm-6 mt-2">
 							<div class="row">
-								<form method="post" action="/Expenses/add" class="input-group col-sm-12">
+								
 								<div class="col-sm-12 mb-2 text-center">
 									<h4>Dodawanie nowego wydatku</h4>
 								</div>
@@ -19,7 +19,7 @@
 								<div class="col-sm-12 mb-2">
 									<p>Kwota wydatku: </p>
 									<div class="input-group">
-										<input type="text" class="form-control" placeholder="Podaj kwotę wydatku" name="expenceAmount" value="{{ data.expenceAmount }}">
+										<input type="text" class="form-control" placeholder="Podaj kwotę wydatku" id="amount" name="expenceAmount" value="{{ data.expenceAmount }}">
 										<div class="input-group-append">
 											<span class="input-group-text"> PLN </span>
 										</div>
@@ -28,7 +28,7 @@
 								<div class="col-sm-12 mb-2">
 									<div class="form-group">
 										<p>Data wydatku:</p>
-										<input type="date" class="form-control" name="dateExpence" value="{{ data.dateExpence }}">
+										<input type="date" class="form-control" name="dateExpence" id="expenseDate" value="{{ data.dateExpence }}">
 									</div>
 								</div>
 								<div class="col-sm-12 mb-2 border border-success">
@@ -56,15 +56,31 @@
 								<div class="col-sm-12 mb-2">
 									<div class="form-group">
 										<p>Komentarz(opcjonalnie):</p>
-										<textarea class="form-control" placeholder="" name="commentExpence"> {{ data.commentExpence }}</textarea>
+										<textarea class="form-control" placeholder="" id="commentExpense" name="commentExpence"> {{ data.commentExpence }}</textarea>
 									</div>
 								</div>
-							
+								<div class="modal fade" id="confirm_modal_over_limit" tabindex="-1" role="dialog">
+										<div class="modal-dialog">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title">Czy na pewno chcesz przekroczyć limit na kategorię?</h5><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+												</div>
+												<div id="delete_limit_message" class="align-items-center col-sm-12 my-2">
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-success w-100" id="addExpeseOffLimitButton">Dodaj wydatek</button>
+													<button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								<div class="col-sm-12 mb-2 align-items-center" id="expenseMessageDiv"></div>
 								<div class="col-sm-12 mb-2">
-									<button type="submit" class="btn btn-success btn-block" id="addExpenceButton"><span class="fa fa-save"></span> Dodaj nowy wydatek</button>
-								</div>
-								</form>
+									<button type="button" class="btn btn-success btn-block" id="addExpenceButton"><span class="fa fa-save"></span> Dodaj nowy wydatek</button>
+								</div>								
+								
 							</div>
+							
 						</div>
 				</div>			
 			</div>

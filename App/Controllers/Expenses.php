@@ -35,6 +35,7 @@
 			'expense_payment_ways' => $this->paymentWays
 		 ]);
 	 }	 
+	 /*
 	public function addAction(){				
 		if(Expense::validateInputs($_POST)){			
 				if(Expense::addNewExpense($_POST, $this->user)){
@@ -53,4 +54,25 @@
 
 		}
 	}	
+	*/
+	public function addExpense(){
+		$data = $_POST['data'];
+		if(Expense::validateInputs($data)){			
+			$this->user = Auth::getUser();		
+			$user_id = $this->user->id;	
+			
+			if(Expense::addNewExpense($data, $this->user)){
+				echo ("<p class=\"text-success light-input-bg\"><b>Dodano nowy wydatek do bazy danych</b></p>");
+			} else {
+				echo ("<p class=\"text-danger light-input-bg\"><b>Wystąpił błąd podczas dodawania nowego wysatku</b></p>");
+			}
+			
+		} else {						
+			View::renderTemplate('Expenses/show.html', [
+			'data' => $_POST,
+			'expense_cathegories' => $this->cathegories,
+			'expense_payment_ways' => $this->paymentWays
+		 ]);
+		}
+	}
  }

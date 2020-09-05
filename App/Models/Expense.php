@@ -63,7 +63,7 @@ class Expense extends \Core\Model
 				}
 			}
 			
-			if(!isset($_POST['payment'])){
+			if(!isset($data['payment'])){
 				$validData = false;
 				Flash::addMessage('Proszę podać sposób płatności', Flash::WARNING);
 			}
@@ -95,7 +95,7 @@ class Expense extends \Core\Model
 
 		$insert_expence_query = $db->exec("INSERT INTO expenses VALUES(NULL, '$userId', '$cathegory_assigned_to_user', '$paymentWay', '$expenceFloatFormat','$dateValue','$comment')");
 		
-		if($insert_ecpence_query > 0) return true;
+		if($insert_expence_query > 0) return true;
 		else return false;
 	}
 	/**
