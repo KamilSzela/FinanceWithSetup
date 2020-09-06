@@ -357,9 +357,31 @@ class Expense extends \Core\Model
 				SET category_limit = NULL, 
 				limit_expiry = NULL
 				WHERE id = :category_id';
-			$db = static::getDB();
-			$stmt = $db->prepare($sql);
-			$stmt->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
-			return $stmt->execute();
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+		return $stmt->execute();
+	}
+	public static function getLimitOfCategorie($data){
+		$sql = $sql = "SELECT * FROM expenses_category_assigned_to_users WHERE id = :category_id";
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':category_id', $data, PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetchAll();
+	}
+	public static function getExpensesOfCategory($data){
+		$dayOfMonth = date("d");
+		$d=strtotime("- ".$dayOfMonth."Days");
+		$beginningOfMonth = date("Y-m-d", $d);
+				
+		$sql = $sql = "SELECT * FROM expenses WHERE expence_category_assigned_to_user_id = :category_id AND date_of_expence > :beginningOfMonth";
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':category_id', $data, PDO::PARAM_INT);
+		$stmt->bindValue(':beginningOfMonth', $beginningOfMonth, PDO::PARAM_STR);
+		
+		$stmt->execute();
+		return $stmt->fetchAll();
 	}
 }

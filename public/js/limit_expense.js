@@ -1,12 +1,12 @@
 $(document).ready(function(){
-	
+	/*
 	$('#test').on('click', function(){
 		var cat = $('input[name="expenceCat"]:checked');
 		
 		console.log(cat[0].id);
 		alert(cat);
 	});
-	/*
+	
 	$("input[name='expenseCat']").change(
     function(){
         if (this.checked && this.value != '') {
@@ -17,52 +17,43 @@ $(document).ready(function(){
 	*/
 	$('#addExpenceButton').on('click', function(){
 		if(checkInputs()){
-			if(checkIfExpenseIsOverLimit()){
-				//show modal
-				$('#confirm_modal_over_limit').modal('show');
-				$('#addExpeseOffLimitButton').on('click', function(){
-					addNewExpeseToTheDatabase();
-				});
-			} else {
-				addNewExpeseToTheDatabase();
-			}
+			var amount = $('#amount').val();
+			let categorieVal = $("input[name='expenceCat']:checked").val();
+			$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(response){		
+				if(response != 0){
+					$('#expenseMessageDiv').html('<p class="text-center text-danger light-input-bg"><b>Przekroczono limit na kategorię o '+response+'zł</b></p>');
+					$('#confirm_modal_over_limit').modal('show');
+					$('#addExpenseOffLimitButton').on('click', function(){
+						addNewExpenseToTheDatabase();
+						$('#confirm_modal_over_limit').modal('hide');
+					});
+				} else {
+					addNewExpenseToTheDatabase();
+				}					
+			});	
 		} 
 	});
-	function addNewExpeseToTheDatabase(){
+	function addNewExpenseToTheDatabase(){
 		var amount = $('#amount').val();
-				var date = $('#expenseDate').val();
-				var paymentWay = $("input[name='payment']:checked").val();
-				var categorie = $("input[name='expenceCat']:checked").val();
-				var comment = $('#commentExpense').val();
-				var array = {
-					expenceAmount: amount,
-					dateExpence: date,
-					payment: paymentWay,
-					expenceCat: categorie,
-					commentExpence: comment
-				}
-				$.post("/Expenses/addExpense", {data: array}, function(response){
-					if(response){
-						$('#expenseMessageDiv').html(response);
-						loadExpenceAttribiutesLists();
-					} else {
-						$('#expenseMessageDiv').html('<p class="text-center text-danger light-input-bg"><b>Wystapił błąd podczas dodawania wydatku do bazy danych</b></p>');
-					}
-				});
-	}
-	function checkIfExpenseIsOverLimit(){
-		var categorieVal = $("input[name='expenceCat']:checked").val();
-		$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal}, function(response){
-					if(response){
-						$('#expenseMessageDiv').html(response);
-						return true;
-					} else {
-						$('#expenseMessageDiv').html('<p class="text-center text-danger light-input-bg"><b>Kwota </b></p>');
-						return false;
-					}
-				});
-		return false;
-	}
+		var date = $('#expenseDate').val();
+		var paymentWay = $("input[name='payment']:checked").val();
+		var categorie = $("input[name='expenceCat']:checked").val();
+		var comment = $('#commentExpense').val();
+		var array = {
+			expenceAmount: amount,
+			dateExpence: date,
+			payment: paymentWay,
+			expenceCat: categorie,
+			commentExpence: comment
+		}
+		$.post("/Expenses/addExpense", {data: array}, function(response){
+			if(response){
+				$('#expenseMessageDiv').html(response);
+			} else {
+				$('#expenseMessageDiv').html('<p class="text-center text-danger light-input-bg"><b>Wystapił błąd podczas dodawania wydatku do bazy danych</b></p>');
+			}
+		});
+	};
 	function checkInputs(){
 		var validInputs = true;
 		var amount = $('#amount').val();
@@ -116,10 +107,10 @@ $(document).ready(function(){
 		}
 		
 		return validInputs;
-	}
+	};
 function replaceCommaWithDot(string){
 	return string.replace(/\,+/gm, ".");
-}
+};
 function checkForMoreThanOneDot(string){
 	let count=0;
 	for(let i=0; i<string.length; i++){
@@ -127,6 +118,6 @@ function checkForMoreThanOneDot(string){
 	}
 	if(count>1) return true;
 	else return false;
-}
+};
 });
 	
