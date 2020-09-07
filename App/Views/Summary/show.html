@@ -64,6 +64,7 @@
 								
 								</table>
 							</div>
+							<div class="col-sm-12" id="expenseTableMessage"></div>
 							<div class="col-sm-12">
 							<h4 class="mb-3 text-center" id="incomeTableHeader"></h4>
 								<table id="incomeTable" class="table table-sm table-dark table-striped table-hover">
@@ -78,6 +79,21 @@
 								<div id="chartExpencesContainer"></div>
 							</div>
 							<div class="col-sm-12 text-center mb-2 pt-2" id="showEvaluation">									
+							</div>
+							<div class="modal fade" id="confirm_modal" tabindex="-1" role="dialog">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Czy na pewno chcesz usunąć zaznaczony dochód/wydatek?</h5><button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+										</div>
+										<div id="delete_limit_message" class="align-items-center col-sm-12 my-2">
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-success w-100" id="deleteDataButton">Usuń wydatek/limit</button>
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>

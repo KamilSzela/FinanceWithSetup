@@ -99,4 +99,20 @@
 		}
 		
 	}
- }
+	/**
+	* remove expense data from the database
+	*
+	*/
+	public function removeExpenseFromDatabase(){
+		if(isset($_POST['deleteId'])){
+			$expenseID = $_POST['deleteId'];
+			if(Expense::removeExpense($expenseID)){
+				echo true;
+			} else {
+				echo false;
+			}	
+		} else {
+			echo false;
+		} 
+	}
+}

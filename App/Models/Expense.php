@@ -114,7 +114,7 @@ class Expense extends \Core\Model
 			$d=strtotime("- ".$dayOfMonth."Days");
 			$beginningOfMonth = date("Y-m-d", $d);
 			
-			$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence > '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+			$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence > '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 			 
 			$users_Expenses = $get_expences_query->fetchAll();
 			
@@ -126,7 +126,7 @@ class Expense extends \Core\Model
 			$d2 = strtotime($beginningOfMonth."-1 Months");
 			$previousMonth = date("Y-m-d",$d2);
 						
-			$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$previousMonth' AND e.date_of_expence <= '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+			$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$previousMonth' AND e.date_of_expence <= '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 			
 			$users_Expenses = $get_expences_query->fetchAll();
 		}
@@ -138,7 +138,7 @@ class Expense extends \Core\Model
 			$d2 = strtotime("- ".$month."Months");
 			$beginningOfYear = date("Y-m-d",$d2);
 			
-			$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfYear' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+			$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfYear' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 			
 			$users_Expenses = $get_expences_query->fetchAll();
 		}
@@ -154,7 +154,7 @@ class Expense extends \Core\Model
 				$_SESSION['dateMessage'] = '<p class="text-danger">Data końca okresu nie moze być mniejsza niż data początku okresu!</p>';
 			}
 			else{
-				$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfTimePeriod' AND e.date_of_expence <= '$endingOfTimePeriod' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+				$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfTimePeriod' AND e.date_of_expence <= '$endingOfTimePeriod' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 				
 				$users_Expenses = $get_expences_query->fetchAll();				
 			}
@@ -383,5 +383,16 @@ class Expense extends \Core\Model
 		
 		$stmt->execute();
 		return $stmt->fetchAll();
+	}
+	/**
+	*
+	*/
+	public static function removeExpense($expenseID){
+		$db = static::getDB();
+	
+		$sql = "DELETE FROM expenses WHERE id = :expenseID";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':expenseID', $expenseID, PDO::PARAM_INT);
+		return $stmt->execute();
 	}
 }

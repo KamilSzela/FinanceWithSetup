@@ -89,6 +89,7 @@ function prepareSummaryBoard() {
 	$('#showEvaluation').html("");
 	$('#showEvaluation').css({'background': 'none'});
 	$('#dateMessageDiv').html("");
+	$('#expenseTableMessage').html("");
 	$('#summaryContainer').css({
 				'height': '500px'
 				});
@@ -109,16 +110,18 @@ function generateExpenceTable(json){
 			$('#expenceTableHeader').html("<b>Tabela podsumowująca twoje wydatki:</b>");
 			$("<thead><tr><th>Kwota</th><th>Data</th><th>Kategoria</th><th>Sposób płatności</th><th>Komentarz</th></tr></thead><tbody>").appendTo('#expenceTable');
 			for(var klucz in jsonObj){
-				var wiersz = jsonObj[klucz];      
-				var kwota = wiersz[0];
-				var data = wiersz[1];
-				var id_kategorii = wiersz[2];
-				var id_platnosc = wiersz[3];
-				var komentarz = wiersz[4];
+				var wiersz = jsonObj[klucz];
+				var id = wiersz[0];			
+				var kwota = wiersz[1];
+				var data = wiersz[2];
+				var id_kategorii = wiersz[3];
+				var id_platnosc = wiersz[4];
+				var komentarz = wiersz[5];
 				
-				$("<tr><td>"+kwota+"</td><td>"+data+"</td><td>"+id_kategorii+"</td><td>"+id_platnosc+"</td><td>"+komentarz+"</td></tr>").appendTo('#expenceTable');             
+				$("<tr><td>"+kwota+"</td><td>"+data+"</td><td>"+id_kategorii+"</td><td>"+id_platnosc+"</td><td>"+komentarz+"</td><td><span class=\"fa fa-trash trash-icon\" data-id=\""+id+"\"></span></td></tr>").appendTo('#expenceTable');             
 			}
 			$('</tbody>').appendTo('#expenceTable');
+			addExpenseOnclick();
 		}		
 }
 
@@ -242,4 +245,31 @@ function adjustSummaryContainerheight(){
 		});
 	}
 }
+function addExpenseOnclick(){
+	$('#expenceTable span.fa-trash').click(function(e){
+		$('#expenseTableMessage').html("");
+    	handler = e.target;
+    	console.log(handler);
+		var expenseId = e.currentTarget.attributes[1].value;
+		//console.log(expenseId);
+        //var idCat = e.currentTarget.attributes[4].value;
+		$('#confirm_modal').modal('show');
+		
+		$('#deleteDataButton').on('click', function(){
+			
+			$.post("/Expenses/removeExpenseFromDatabase", {deleteId: expenseId}, function(response){
+				if(response){
+					$('#expenseTableMessage').html('<p class="text-center text-success light-input-bg"><b>Usunięto zaznaczony wydatek</b></p>');
+					$(handler).parent().parent().remove();
+					//generateStandardSpanSummary('lastMonth');
+				} else {
+					$('#expenseTableMessage').html('<p class="text-center text-danger light-input-bg"><b>Wystapił błąd podczas usuwania wydatku</b></p>');
+				}
+				$('#confirm_modal').modal('hide');
+			});
+			
+		});
+		
+    });
+};
 });

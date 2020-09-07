@@ -325,12 +325,12 @@ function checkForMoreThanOneDot(string){
 	}
 	if(count>1) return true;
 	else return false;
-}
+};
 function adjustSetupContainerheight(){
 	let windowHeight = $(window).height() - 70;
 	let stringHeight = windowHeight.toString() +"px";
 	$('#setupContainer').css({'height': stringHeight});	
-}
+};
 function addOnclick(){
 	$('span.fa-trash').click(function(e){
 		$('#delete_limit_message').html("");
@@ -353,6 +353,6 @@ function addOnclick(){
 		});
 		
     });
-}
+};
 });
 

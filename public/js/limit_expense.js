@@ -21,7 +21,7 @@ $(document).ready(function(){
 			let categorieVal = $("input[name='expenceCat']:checked").val();
 			$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(response){		
 				if(response != 0){
-					$('#expenseMessageDiv').html('<p class="text-center text-danger light-input-bg"><b>Przekroczono limit na kategorię o '+response+'zł</b></p>');
+					$('#delete_limit_message').html('<p class="text-center text-danger light-input-bg"><b>Przekroczono limit na kategorię o '+response+'zł</b></p>');
 					$('#confirm_modal_over_limit').modal('show');
 					$('#addExpenseOffLimitButton').on('click', function(){
 						addNewExpenseToTheDatabase();
