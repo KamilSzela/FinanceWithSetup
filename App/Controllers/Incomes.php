@@ -49,4 +49,20 @@
 		 ]);
 		}
 	}
+	/**
+	* remove income data from the database
+	*
+	*/
+	public function removeIncomeFromDatabase(){
+		if(isset($_POST['deleteId'])){
+			$expenseID = $_POST['deleteId'];
+			if(Income::removeIncome($expenseID)){
+				echo true;
+			} else {
+				echo false;
+			}	
+		} else {
+			echo false;
+		} 
+	}
  }

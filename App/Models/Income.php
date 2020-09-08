@@ -93,7 +93,7 @@ class Income extends \Core\Model
 			$d=strtotime("- ".$dayOfMonth."Days");
 			$beginningOfMonth = date("Y-m-d", $d);
 			
-			$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income > '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+			$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income > '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 			$users_Incomes = $get_incomes_query->fetchAll();
 			
@@ -105,7 +105,7 @@ class Income extends \Core\Model
 			$d2 = strtotime($beginningOfMonth."-1 Months");
 			$previousMonth = date("Y-m-d",$d2);
 						
-			$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$previousMonth' AND i.date_of_income <= '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+			$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$previousMonth' AND i.date_of_income <= '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 			$users_Incomes = $get_incomes_query->fetchAll();
 		}
@@ -117,7 +117,7 @@ class Income extends \Core\Model
 			$d2 = strtotime("- ".$month."Months");
 			$beginningOfYear = date("Y-m-d",$d2);
 			
-			$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfYear' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+			$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfYear' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 			$users_Incomes = $get_incomes_query->fetchAll();
 		}
@@ -133,7 +133,7 @@ class Income extends \Core\Model
 				Flash::addMessage('Data końca okresu nie moze być mniejsza niż data początku okresu!');
 			}
 			else{
-				$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfTimePeriod' AND i.date_of_income <= '$endingOfTimePeriod' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+				$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfTimePeriod' AND i.date_of_income <= '$endingOfTimePeriod' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 				$users_Incomes = $get_incomes_query->fetchAll();				
 			}
@@ -254,5 +254,16 @@ class Income extends \Core\Model
 			$stmt = $db->prepare($sql);
 			$stmt->bindValue(':categoryID', $categoryID, PDO::PARAM_INT);
 			return $stmt->execute();
+	}
+	/**
+	* remove income from income table
+	*/
+	public static function removeIncome($expenseID){
+		$db = static::getDB();
+	
+		$sql = "DELETE FROM incomes WHERE id = :expenseID";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':expenseID', $expenseID, PDO::PARAM_INT);
+		return $stmt->execute();
 	}
 }

@@ -385,7 +385,7 @@ class Expense extends \Core\Model
 		return $stmt->fetchAll();
 	}
 	/**
-	*
+	* remove expense from expenses table
 	*/
 	public static function removeExpense($expenseID){
 		$db = static::getDB();
