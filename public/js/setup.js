@@ -1,4 +1,5 @@
 $(document).ready(function(){
+jQuery.ajaxSetup({async:false});
 $('#listLoginChange').on('click', function(){
 	
 	$('#loginSetup').removeClass('d-none');
@@ -200,17 +201,16 @@ function generateExpenceCathegoriesList(json){
 				var categorie = data[2];
 				var limit = data[3];
 				string += "<div class=\"custom-control custom-radio light-input-bg pl-4\"><input type=\"radio\" class=\"custom-control-input\" id=\""+ categorie +"\" name=\"expenceCategoryListDelete\" value=\""+id+"\"> <label class=\"custom-control-label\" for=\""+categorie+"\">"+categorie+"</label>";
-				if(limit !== null && limit != 0) {
+				if(limit != null && limit != 0) {
 					string += "<span class=\"pull-right\">Limit ="+limit+"zł</span><span class=\"fa fa-trash trash-icon pull-right\" data-toggle=\"modal\" data-target=\"#confirm_modal\" data-name=\""+categorie+"\" data-id=\""+id+"\"></span>";
 				}
 				string += "</div>";
 				$(string).appendTo('#expenceCathegoryDelete');
 				string = "";	
 			}
-	}	
-		$('#setupContainer').css({'height': 'auto'});	
-		addOnclick();
-	
+			$('#setupContainer').css({'height': 'auto'});	
+			addOnclick();
+	}		
 }
 
 $('#addIncomeCathegoryButton').on('click', function(){

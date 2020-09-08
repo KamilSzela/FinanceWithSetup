@@ -15,6 +15,7 @@ $(document).ready(function(){
         }
     });
 	*/
+	jQuery.ajaxSetup({async:false});
 	$('#addExpenceButton').on('click', function(){
 		if(checkInputs()){
 			var amount = $('#amount').val();

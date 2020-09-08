@@ -48,8 +48,8 @@
 		
 	}
 	/**
-	*
-	*
+	*	load data summarizing the users expenses
+	*	@return json object if success
 	*/
 	public function expenceSummaryTable(){
 		$this->user = Auth::getUser();
@@ -61,8 +61,8 @@
 		echo json_encode($sumOfExpenses); 
 	}
 	/**
-	*
-	*
+	*	load data of the users incomes
+	*	@return json object if success
 	*/
 	public function incomesTables(){
 		$this->user = Auth::getUser();
@@ -74,8 +74,8 @@
 		echo json_encode($incomes);
 	}
 	/**
-	*
-	*
+	*	load data summarizing the users incomes
+	*	@return json object if success
 	*/
 	public function incomeSummarytable(){
 		$this->user = Auth::getUser();
