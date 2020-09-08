@@ -35,22 +35,84 @@
 			'expense_payment_ways' => $this->paymentWays
 		 ]);
 	 }	 
-	public function addAction(){				
-		if(Expense::validateInputs($_POST)){			
-				if(Expense::addNewExpense($_POST, $this->user)){
-					Flash::addMessage('Dodano nowy wydatek do Twojej bazy danych!');
-						View::renderTemplate('Expenses/show.html', [
-						'expense_cathegories' => $this->cathegories,
-						'expense_payment_ways' => $this->paymentWays
-					 ]);		
-				}
-		} else {			
+	/**
+	* add new expese tot he database
+	* return string or generate view
+	*/
+	public function addExpense(){
+		$data = $_POST['data'];
+		if(Expense::validateInputs($data)){			
+			$this->user = Auth::getUser();		
+			$user_id = $this->user->id;	
+			
+			if(Expense::addNewExpense($data, $this->user)){
+				echo ("<p class=\"text-success text-center light-input-bg\"><b>Dodano nowy wydatek do bazy danych</b></p>");
+			} else {
+				echo ("<p class=\"text-danger text-center light-input-bg\"><b>Wystąpił błąd podczas dodawania nowego wysatku</b></p>");
+			}
+			
+		} else {						
 			View::renderTemplate('Expenses/show.html', [
 			'data' => $_POST,
 			'expense_cathegories' => $this->cathegories,
 			'expense_payment_ways' => $this->paymentWays
 		 ]);
-
 		}
-	}	
- }
+	}
+	/**
+	* check if adding expense is over limit
+	*/
+	public function checkLimitOfLastMonth(){	
+		$catId = $_POST['categorie'];
+		$newExpenseValue = $_POST['expenseAmount'];
+		$categoryData = Expense::getLimitOfCategorie($catId);
+		$dataArray = $categoryData[0];
+		$limit = floatval($dataArray['category_limit']);
+		$expiryDate = $dataArray['limit_expiry'];
+		//echo var_dump($data);
+		$expenseOfCategoryFromThisMonth = Expense::getExpensesOfCategory($catId);
+		//$expenseData = $expenseOfCategoryFromThisMonth[0];
+		//echo var_dump($expensedata);
+		
+		if($limit == NULL){
+			echo false;
+		} else {
+			$currentDate = date('YY-mm-dd');
+			if($currentDate > $expiryDate && $expiryDate != NULL){ 
+			// check if limit is greater than expense values
+				$sumOfExpenses = floatval($newExpenseValue);
+				foreach($expenseOfCategoryFromThisMonth as $expense){
+					//add values of expenses from this month
+					$sumOfExpenses += floatval($expense['amount']);					
+				}
+				if($sumOfExpenses > $limit){
+					// expenses over limit
+					echo $sumOfExpenses - $limit;
+				} else {
+					// expenses below limit
+					echo false;
+				}
+			} else { 
+				// limit expired
+				echo false;
+			}
+		}
+		
+	}
+	/**
+	* remove expense data from the database
+	*
+	*/
+	public function removeExpenseFromDatabase(){
+		if(isset($_POST['deleteId'])){
+			$expenseID = $_POST['deleteId'];
+			if(Expense::removeExpense($expenseID)){
+				echo true;
+			} else {
+				echo false;
+			}	
+		} else {
+			echo false;
+		} 
+	}
+}

@@ -58,7 +58,7 @@ function generateStandardSpanSummary(dateSpan){
 		var sumOfExpences = 0;
 		var sumOfIncomes = 0;
 			$.get("/Summary/expencesTables", {timePeriod: dateSpan} , function(json){
-				generateExpenceTable(json);								
+				generateExpenceTable(json);				
 			});
 			$.get("/Summary/incomesTables", {timePeriod: dateSpan} , function(json){
 				generateIncomeTable(json);		
@@ -89,6 +89,7 @@ function prepareSummaryBoard() {
 	$('#showEvaluation').html("");
 	$('#showEvaluation').css({'background': 'none'});
 	$('#dateMessageDiv').html("");
+	$('#expenseTableMessage').html("");
 	$('#summaryContainer').css({
 				'height': '500px'
 				});
@@ -107,18 +108,20 @@ function generateExpenceTable(json){
 			$('#expenceTable').html('<p class="text-center"><b>Brak wydatków w rozpatrywanym okresie</b></p>');
 		}else{
 			$('#expenceTableHeader').html("<b>Tabela podsumowująca twoje wydatki:</b>");
-			$("<thead><tr><th>Kwota</th><th>Data</th><th>Kategoria</th><th>Sposób płatności</th><th>Komentarz</th></tr></thead><tbody>").appendTo('#expenceTable');
+			$("<thead class=\"text-center\"><tr><th>Kwota</th><th>Data</th><th>Kategoria</th><th>Sposób płatności</th><th>Komentarz</th><th>Usuń</th></tr></thead><tbody>").appendTo('#expenceTable');
 			for(var klucz in jsonObj){
-				var wiersz = jsonObj[klucz];      
-				var kwota = wiersz[0];
-				var data = wiersz[1];
-				var id_kategorii = wiersz[2];
-				var id_platnosc = wiersz[3];
-				var komentarz = wiersz[4];
+				var wiersz = jsonObj[klucz];
+				var id = wiersz[0];			
+				var kwota = wiersz[1];
+				var data = wiersz[2];
+				var id_kategorii = wiersz[3];
+				var id_platnosc = wiersz[4];
+				var komentarz = wiersz[5];
 				
-				$("<tr><td>"+kwota+"</td><td>"+data+"</td><td>"+id_kategorii+"</td><td>"+id_platnosc+"</td><td>"+komentarz+"</td></tr>").appendTo('#expenceTable');             
+				$("<tr class=\"text-center\"><td>"+kwota+"</td><td>"+data+"</td><td>"+id_kategorii+"</td><td>"+id_platnosc+"</td><td>"+komentarz+"</td><td><span class=\"fa fa-trash trash-icon\" data-id=\""+id+"\"></span></td></tr>").appendTo('#expenceTable');             
 			}
 			$('</tbody>').appendTo('#expenceTable');
+			addExpenseOnclick();
 		}		
 }
 
@@ -180,16 +183,18 @@ function generateIncomeTable(json){
 			$('#incomeTable').html('<p class="text-center"><b>Brak dochodów w rozpatrywanym okresie</b></p>');
 		}else{
 			$('#incomeTableHeader').html("<b>Tabela podsumowująca twoje dochody:</b>");
-			$("<thead><tr><th>Kwota</th><th>Data</th><th>Kategoria</th><th>Komentarz</th></tr><thead><tbody>").appendTo('#incomeTable');
+			$("<thead class=\"text-center\"><tr><th>Kwota</th><th>Data</th><th>Kategoria</th><th>Komentarz</th><th>Usuń</th></tr><thead><tbody>").appendTo('#incomeTable');
 			for(var klucz in jsonObj){
-				var wiersz = jsonObj[klucz];      
-				var kwota = wiersz[0];
-				var data = wiersz[1];
-				var id_kategorii = wiersz[2];
-				var komentarz = wiersz[3];
-				  $("<tr><td>"+kwota+"</td><td>"+data+"</td><td>"+id_kategorii+"</td><td>"+komentarz+"</td></tr>").appendTo('#incomeTable');             
+				var wiersz = jsonObj[klucz];   
+				var id = wiersz[0];
+				var kwota = wiersz[1];
+				var data = wiersz[2];
+				var id_kategorii = wiersz[3];
+				var komentarz = wiersz[4];
+				  $("<tr class=\"text-center\"><td>"+kwota+"</td><td>"+data+"</td><td>"+id_kategorii+"</td><td>"+komentarz+"</td><td><span class=\"fa fa-trash trash-icon\" data-id=\""+id+"\"></span></td></tr>").appendTo('#incomeTable');             
 			}
 			$('</tbody>').appendTo('#incomeTable');
+			addIncomeOnclick();
 		}	
 }
 function generateIncomeSummaryTable(json, sumOfIncomes){
@@ -242,4 +247,66 @@ function adjustSummaryContainerheight(){
 		});
 	}
 }
+function addExpenseOnclick(){
+	$('#expenceTable span.fa-trash').click(function(e){
+		$('#expenseTableMessage').html("");
+    	handler = e.target;
+    	console.log(handler);
+		var expenseId = e.currentTarget.attributes[1].value;
+		//console.log(expenseId);
+        //var idCat = e.currentTarget.attributes[4].value;
+		$('#confirm_modal').modal('show');
+		
+		$('#deleteDataButton').on('click', function(){
+			
+			$.post("/Expenses/removeExpenseFromDatabase", {deleteId: expenseId}, function(response){
+				if(response){
+					$('#expenseTableMessage').html('<p class="text-center text-success light-input-bg"><b>Usunięto zaznaczony wydatek</b></p>');
+					$(handler).parent().parent().remove();
+					//generateStandardSpanSummary('lastMonth');
+				} else {
+					$('#expenseTableMessage').html('<p class="text-center text-danger light-input-bg"><b>Wystapił błąd podczas usuwania wydatku</b></p>');
+				}
+				$('#confirm_modal').modal('hide');
+			});
+			
+		});
+		
+    });
+};
+function addIncomeOnclick(){
+	$('#incomeTable span.fa-trash').click(function(e){
+		$('#incomeTableMessage').html("");
+    	handler = e.target;
+    	console.log(handler);
+		var incomeId = e.currentTarget.attributes[1].value;
+
+		$('#confirm_modal').modal('show');
+		
+		$('#deleteDataButton').on('click', function(){			
+			$.post("/Incomes/removeIncomeFromDatabase", {deleteId: incomeId}, function(response){
+				if(response){
+					$('#incomeTableMessage').html('<p class="text-center text-success light-input-bg"><b>Usunięto zaznaczony dochód</b></p>');
+					$(handler).parent().parent().remove();
+					//generateStandardSpanSummary('lastMonth');
+				} else {
+					$('#incomeTableMessage').html('<p class="text-center text-danger light-input-bg"><b>Wystapił błąd podczas usuwania dochodu</b></p>');
+				}
+				$('#confirm_modal').modal('hide');
+			});
+			
+		});
+		
+    });
+};
+$(window).resize(function(){
+	var width = parseInt($(window).width());
+	if(width < 500){
+		$('#expenceTable').addClass('font06');
+		$('#incomeTable').addClass('font06');
+	} else {
+		$('#expenceTable').removeClass('font06');
+		$('#incomeTable').removeClass('font06');
+	}
+});
 });

@@ -61,3 +61,16 @@ body
 .orange-font{
 	color:#bd680d !important;
 }
+.w-100{
+	width: 100%;
+}
+.trash-icon{
+	padding-top: 4px;
+	padding-right: 5px;
+}
+.trash-icon:hover{
+	cursor:pointer;
+}
+.font06{
+	font-size: 0.6rem;
+}

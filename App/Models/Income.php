@@ -93,7 +93,7 @@ class Income extends \Core\Model
 			$d=strtotime("- ".$dayOfMonth."Days");
 			$beginningOfMonth = date("Y-m-d", $d);
 			
-			$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income > '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+			$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income > '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 			$users_Incomes = $get_incomes_query->fetchAll();
 			
@@ -105,7 +105,7 @@ class Income extends \Core\Model
 			$d2 = strtotime($beginningOfMonth."-1 Months");
 			$previousMonth = date("Y-m-d",$d2);
 						
-			$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$previousMonth' AND i.date_of_income <= '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+			$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$previousMonth' AND i.date_of_income <= '$beginningOfMonth' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 			$users_Incomes = $get_incomes_query->fetchAll();
 		}
@@ -117,7 +117,7 @@ class Income extends \Core\Model
 			$d2 = strtotime("- ".$month."Months");
 			$beginningOfYear = date("Y-m-d",$d2);
 			
-			$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfYear' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+			$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfYear' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 			$users_Incomes = $get_incomes_query->fetchAll();
 		}
@@ -133,7 +133,7 @@ class Income extends \Core\Model
 				Flash::addMessage('Data końca okresu nie moze być mniejsza niż data początku okresu!');
 			}
 			else{
-				$get_incomes_query = $db->query("SELECT i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfTimePeriod' AND i.date_of_income <= '$endingOfTimePeriod' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
+				$get_incomes_query = $db->query("SELECT i.id, i.amount, i.date_of_income, ic.name, i.income_comment FROM `incomes` AS i, `incomes_category_assigned_to_users` AS ic WHERE i.date_of_income >= '$beginningOfTimePeriod' AND i.date_of_income <= '$endingOfTimePeriod' AND i.user_id='$user_id' AND i.income_category_assigned_to_user_id = ic.id ORDER BY i.income_category_assigned_to_user_id");
 			 
 				$users_Incomes = $get_incomes_query->fetchAll();				
 			}
@@ -203,5 +203,67 @@ class Income extends \Core\Model
 			}	
 	}
 		return $incomes_categories;
+	}
+	/**
+	* add new income category to users data
+	* param $user_id the user id, $category - category added by user
+	* return boolean
+	*/
+	public static function addNewCategory($user_id, $category){
+		$db = static::getDB();
+		if(!static::categoryExists($user_id, $category)){
+			$sql = "INSERT INTO incomes_category_assigned_to_users VALUES(NULL, :user_id, :category)";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':category', $category, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+			return $stmt->execute();
+		} else {
+			return false;
+		}
+	}
+	/**
+	* check if category already exists in the database
+	* param $user_id the user id, $category - category added by user
+	* @return boolean
+	*/
+	public static function categoryExists($user_id, $category){
+		$db = static::getDB();
+		$sql = "SELECT * FROM incomes_category_assigned_to_users WHERE user_id = :user_id";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+		if($stmt->rowCount()>0){
+			$results = $stmt->fetchAll();
+			foreach($results as $result){
+				if($result['name'] == $category){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
+	* remove category of expense from the database 
+	* @param $usr_id - user id $categoryID - id of category to delete
+	* @return boolean
+	*/
+	public static function removeCategory($categoryID){
+			$db = static::getDB();
+		
+			$sql = "DELETE FROM incomes_category_assigned_to_users WHERE id = :categoryID";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':categoryID', $categoryID, PDO::PARAM_INT);
+			return $stmt->execute();
+	}
+	/**
+	* remove income from income table
+	*/
+	public static function removeIncome($expenseID){
+		$db = static::getDB();
+	
+		$sql = "DELETE FROM incomes WHERE id = :expenseID";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':expenseID', $expenseID, PDO::PARAM_INT);
+		return $stmt->execute();
 	}
 }

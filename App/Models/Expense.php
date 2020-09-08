@@ -63,7 +63,7 @@ class Expense extends \Core\Model
 				}
 			}
 			
-			if(!isset($_POST['payment'])){
+			if(!isset($data['payment'])){
 				$validData = false;
 				Flash::addMessage('Proszę podać sposób płatności', Flash::WARNING);
 			}
@@ -95,7 +95,7 @@ class Expense extends \Core\Model
 
 		$insert_expence_query = $db->exec("INSERT INTO expenses VALUES(NULL, '$userId', '$cathegory_assigned_to_user', '$paymentWay', '$expenceFloatFormat','$dateValue','$comment')");
 		
-		if($insert_ecpence_query > 0) return true;
+		if($insert_expence_query > 0) return true;
 		else return false;
 	}
 	/**
@@ -114,7 +114,7 @@ class Expense extends \Core\Model
 			$d=strtotime("- ".$dayOfMonth."Days");
 			$beginningOfMonth = date("Y-m-d", $d);
 			
-			$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence > '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+			$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence > '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 			 
 			$users_Expenses = $get_expences_query->fetchAll();
 			
@@ -126,7 +126,7 @@ class Expense extends \Core\Model
 			$d2 = strtotime($beginningOfMonth."-1 Months");
 			$previousMonth = date("Y-m-d",$d2);
 						
-			$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$previousMonth' AND e.date_of_expence <= '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+			$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$previousMonth' AND e.date_of_expence <= '$beginningOfMonth' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 			
 			$users_Expenses = $get_expences_query->fetchAll();
 		}
@@ -138,7 +138,7 @@ class Expense extends \Core\Model
 			$d2 = strtotime("- ".$month."Months");
 			$beginningOfYear = date("Y-m-d",$d2);
 			
-			$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfYear' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+			$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfYear' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 			
 			$users_Expenses = $get_expences_query->fetchAll();
 		}
@@ -154,7 +154,7 @@ class Expense extends \Core\Model
 				$_SESSION['dateMessage'] = '<p class="text-danger">Data końca okresu nie moze być mniejsza niż data początku okresu!</p>';
 			}
 			else{
-				$get_expences_query = $db->query("SELECT e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfTimePeriod' AND e.date_of_expence <= '$endingOfTimePeriod' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
+				$get_expences_query = $db->query("SELECT e.id, e.amount, e.date_of_expence, ec.name, pm.name, e.expence_comment FROM `expenses` AS e, `expenses_category_assigned_to_users` AS ec, `payment_methods_assigned_to_users` AS pm WHERE e.date_of_expence >= '$beginningOfTimePeriod' AND e.date_of_expence <= '$endingOfTimePeriod' AND e.user_id='$user_id' AND e.expence_category_assigned_to_user_id = ec.id AND e.payment_method_assigned_to_user_id = pm.id ORDER BY e.expence_category_assigned_to_user_id");
 				
 				$users_Expenses = $get_expences_query->fetchAll();				
 			}
@@ -226,5 +226,173 @@ class Expense extends \Core\Model
 				
 		}
 		return $expenses_categories;
+	}
+	/**
+	* add new payment way to the database 
+	* @param $usr_id - user id $newPaymentWay - payment way added by user
+	* @return boolean
+	*/
+	public static function addNewPaymentWay($user_id, $newPaymentWay){		
+			if(static::paymentExists($user_id,$newPaymentWay) == false){
+				$db = static::getDB();
+				$sql = "INSERT INTO payment_methods_assigned_to_users VALUES(NULL, :user_id, :name)";
+				$stmt = $db->prepare($sql);
+				$stmt->bindValue(':name', $newPaymentWay, PDO::PARAM_STR);
+				$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+				return $stmt->execute();			
+			} else {
+				return false;
+			}				
+	}
+	/**
+	* check if payment way assigned to the user exists in the database 
+	* @param $usr_id - user id $newPaymentWay - payment way added by user
+	* @return boolean
+	*/
+	public static function paymentExists($user_id,$newPaymentWay){
+		$db = static::getDB();
+		$sql = "SELECT * FROM payment_methods_assigned_to_users WHERE user_id = :user_id";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+		if($stmt->rowCount()>0){
+			$results = $stmt->fetchAll();
+			foreach($results as $result){
+				if($result['name'] == $newPaymentWay){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
+	* remove new payment way from the database 
+	* @param $usr_id - user id $paymentWayID - payment way id to remove
+	* @return boolean
+	*/
+	public static function removePaymentWay($user_id, $paymentWayID){
+			$db = static::getDB();
+			
+			$sql = "DELETE FROM payment_methods_assigned_to_users WHERE id = :paymentWayID";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':paymentWayID', $paymentWayID, PDO::PARAM_INT);
+			return $stmt->execute();			
+	}
+	/**
+	* add new category to the database 
+	* @param $usr_id - user id $category - category way added by user
+	* @return boolean
+	*/
+	public static function addNewCategory($user_id, $category){
+		if(!static::checkIfCategoryAlreadyExists($user_id, $category)){
+			$db = static::getDB();
+		
+			$sql = "INSERT INTO expenses_category_assigned_to_users VALUES(NULL, :user_id, :category, NULL, NULL)";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':category', $category, PDO::PARAM_STR);
+			$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+			
+			return $stmt->execute();
+		} else {
+			return false;
+		}
+	}
+	/**
+	* check if category assigned to the user exists in the database 
+	* @param $usr_id - user id $category - category added by user
+	* @return boolean
+	*/
+	public static function checkIfCategoryAlreadyExists($user_id, $category){
+		$db = static::getDB();
+		$sql = "SELECT * FROM expenses_category_assigned_to_users WHERE user_id = :user_id";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		$stmt->execute();
+		if($stmt->rowCount()>0){
+			$results = $stmt->fetchAll();
+			foreach($results as $result){
+				if($result['name'] == $category){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	/**
+	* remove category of expense from the database 
+	* @param $usr_id - user id $categoryID - id of category to delete
+	* @return boolean
+	*/
+	public static function removeCategory($user_id, $categoryID){
+			$db = static::getDB();
+		
+			$sql = "DELETE FROM expenses_category_assigned_to_users WHERE id = :categoryID";
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':categoryID', $categoryID, PDO::PARAM_INT);
+			return $stmt->execute();
+	}
+	public static function setExpenseLimit($catID, $limit){
+			$db = static::getDB();
+		
+			$dayOfMonth = date("d");
+			$month = date("m");
+			$d=strtotime("- ".$dayOfMonth."Days");
+			$beginningOfMonth = date("Y-m-d", $d);
+			$d2 = strtotime($beginningOfMonth . "+1Months");
+			$beginningOfNextMonth = date("Y-m-d",$d2);
+		
+			$sql = "DELETE FROM expenses_category_assigned_to_users WHERE id = :categoryID";
+			$sql = 'UPDATE expenses_category_assigned_to_users 
+			SET category_limit = :limit, limit_expiry = :date 
+			WHERE id = :id';
+			$stmt = $db->prepare($sql);
+			$stmt->bindValue(':limit', $limit, PDO::PARAM_STR);
+			$stmt->bindValue(':date', $beginningOfNextMonth, PDO::PARAM_STR);
+			$stmt->bindValue(':id', $catID, PDO::PARAM_INT);
+			
+			return $stmt->execute();
+	}
+	public static function removeCategoryLimit($categoryID){
+		$sql = 'UPDATE expenses_category_assigned_to_users 
+				SET category_limit = NULL, 
+				limit_expiry = NULL
+				WHERE id = :category_id';
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':category_id', $categoryID, PDO::PARAM_INT);
+		return $stmt->execute();
+	}
+	public static function getLimitOfCategorie($data){
+		$sql = $sql = "SELECT * FROM expenses_category_assigned_to_users WHERE id = :category_id";
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':category_id', $data, PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetchAll();
+	}
+	public static function getExpensesOfCategory($data){
+		$dayOfMonth = date("d");
+		$d=strtotime("- ".$dayOfMonth."Days");
+		$beginningOfMonth = date("Y-m-d", $d);
+				
+		$sql = $sql = "SELECT * FROM expenses WHERE expence_category_assigned_to_user_id = :category_id AND date_of_expence > :beginningOfMonth";
+		$db = static::getDB();
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':category_id', $data, PDO::PARAM_INT);
+		$stmt->bindValue(':beginningOfMonth', $beginningOfMonth, PDO::PARAM_STR);
+		
+		$stmt->execute();
+		return $stmt->fetchAll();
+	}
+	/**
+	* remove expense from expenses table
+	*/
+	public static function removeExpense($expenseID){
+		$db = static::getDB();
+	
+		$sql = "DELETE FROM expenses WHERE id = :expenseID";
+		$stmt = $db->prepare($sql);
+		$stmt->bindValue(':expenseID', $expenseID, PDO::PARAM_INT);
+		return $stmt->execute();
 	}
 }
