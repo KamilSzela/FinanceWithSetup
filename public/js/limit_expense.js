@@ -20,17 +20,27 @@ $(document).ready(function(){
 		if(checkInputs()){
 			var amount = $('#amount').val();
 			let categorieVal = $("input[name='expenceCat']:checked").val();
-			$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(response){		
-				if(response != 0){
-					$('#delete_limit_message').html('<p class="text-center text-danger light-input-bg"><b>Przekroczono limit na kategorię o '+response+'zł</b></p>');
-					$('#confirm_modal_over_limit').modal('show');
-					$('#addExpenseOffLimitButton').on('click', function(){
+			$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(json){	
+				var jsonObj = $.parseJSON(json);
+				//console.log(jsonObj);
+				
+				if(jsonObj['limit'] != false){
+					if(jsonObj['overLimit'] == true){
+						$('#delete_limit_message').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-danger"><th>Nowy wydatek</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-danger"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
+						$('#confirm_modal_over_limit').modal('show');
+						$('#addExpenseOffLimitButton').on('click', function(){
+							addNewExpenseToTheDatabase();
+							$('#confirm_modal_over_limit').modal('hide');
+						});
+					} else if(jsonObj['overLimit'] == false){
+						$('#expenseMessageDiv').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-success"><th>Nowy wydatek</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-success"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
 						addNewExpenseToTheDatabase();
-						$('#confirm_modal_over_limit').modal('hide');
-					});
+					}
 				} else {
+					// limit is not set or expired
 					addNewExpenseToTheDatabase();
-				}					
+				}	
+									
 			});	
 		} 
 	});

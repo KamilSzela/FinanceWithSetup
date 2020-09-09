@@ -23,7 +23,19 @@ class Expense extends \Core\Model
 		$stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 		
 		$stmt->execute();
-		return $stmt->fetchAll();
+		$categoriesData = $stmt->fetchAll();
+		//check if limit is expired - if is, remove it from database
+		$currentDate = date('Y-m-d');
+		foreach($categoriesData as $row){
+			if($row['limit_expiry'] !== NULL){
+				if($row['limit_expiry'] < $currentDate){
+					static::removeCategoryLimit($row['id']);
+					$row['category_limit'] = NULL;
+					$row['limit_expiry'] = NULL;
+				}
+			}
+		}		
+		return $categoriesData;
 	}
 	/**
 	* find payment ways from database assigned to called user id

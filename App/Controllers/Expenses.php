@@ -73,9 +73,11 @@
 		$expenseOfCategoryFromThisMonth = Expense::getExpensesOfCategory($catId);
 		//$expenseData = $expenseOfCategoryFromThisMonth[0];
 		//echo var_dump($expensedata);
-		
+		$aggregatedData=[];
+		$aggregatedData['new_expense'] = $newExpenseValue;
 		if($limit == NULL){
-			echo false;
+			$aggregatedData['limit'] = false;
+			echo json_encode($aggregatedData);
 		} else {
 			$currentDate = date('YY-mm-dd');
 			if($currentDate > $expiryDate && $expiryDate != NULL){ 
@@ -87,14 +89,23 @@
 				}
 				if($sumOfExpenses > $limit){
 					// expenses over limit
-					echo $sumOfExpenses - $limit;
+					$aggregatedData['limit'] = $limit;
+					$aggregatedData['expense_sum'] = $sumOfExpenses;
+					$aggregatedData['difference'] = $sumOfExpenses - $limit;
+					$aggregatedData['overLimit'] = true;
+					echo json_encode($aggregatedData);
 				} else {
 					// expenses below limit
-					echo false;
+					$aggregatedData['limit'] = $limit;
+					$aggregatedData['expense_sum'] = $sumOfExpenses;
+					$aggregatedData['difference'] = $sumOfExpenses - $limit;
+					$aggregatedData['overLimit'] = false;
+					echo json_encode($aggregatedData);
 				}
 			} else { 
 				// limit expired
-				echo false;
+				$aggregatedData['limit'] = false;
+				echo json_encode($aggregatedData);
 			}
 		}
 		
