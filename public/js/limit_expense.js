@@ -31,7 +31,7 @@ $(document).ready(function(){
 		}
 	});
 	function checkLimit(){
-		var amount = $('#amount').val();
+		var amount = replaceCommaWithDot($('#amount').val());
 		let categorieVal = $("input[name='expenceCat']:checked").val();
 		$('#limitMessageDiv').html('');
 		$('#expenseMessageDiv').html('');

@@ -61,6 +61,7 @@
 	}
 	/**
 	* check if adding expense is over limit
+	* return array
 	*/
 	public function checkLimitOfLastMonth(){	
 		$catId = $_POST['categorie'];
@@ -74,7 +75,7 @@
 		//$expenseData = $expenseOfCategoryFromThisMonth[0];
 		//echo var_dump($expensedata);
 		$aggregatedData=[];
-		$aggregatedData['new_expense'] = $newExpenseValue;
+		$aggregatedData['new_expense'] = round(floatval($newExpenseValue),2);
 		if($limit == NULL){
 			$aggregatedData['limit'] = false;
 			echo json_encode($aggregatedData);
@@ -89,15 +90,15 @@
 				}
 				if($sumOfExpenses > $limit){
 					// expenses over limit
-					$aggregatedData['limit'] = $limit;
-					$aggregatedData['expense_sum'] = $sumOfExpenses;
-					$aggregatedData['difference'] = $sumOfExpenses - $limit;
+					$aggregatedData['limit'] = round($limit,2);
+					$aggregatedData['expense_sum'] = round($sumOfExpenses-$newExpenseValue,2);
+					$aggregatedData['difference'] = round($sumOfExpenses - $limit,2);
 					$aggregatedData['overLimit'] = true;
 					echo json_encode($aggregatedData);
 				} else {
 					// expenses below limit
 					$aggregatedData['limit'] = round($limit,2);
-					$aggregatedData['expense_sum'] = round($sumOfExpenses,2);
+					$aggregatedData['expense_sum'] = round($sumOfExpenses-$newExpenseValue,2);
 					$aggregatedData['difference'] = round($limit - $sumOfExpenses,2);
 					$aggregatedData['overLimit'] = false;
 					echo json_encode($aggregatedData);
