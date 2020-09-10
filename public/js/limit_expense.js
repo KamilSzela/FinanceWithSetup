@@ -34,6 +34,7 @@ $(document).ready(function(){
 		var amount = $('#amount').val();
 		let categorieVal = $("input[name='expenceCat']:checked").val();
 		$('#limitMessageDiv').html('');
+		$('#expenseMessageDiv').html('');
 		$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(json){	
 			var jsonObj = $.parseJSON(json);
 					
@@ -41,15 +42,21 @@ $(document).ready(function(){
 				//limit is on
 				if(jsonObj['overLimit'] == true){
 					// expenses over limit
-					$('#limitMessageDiv').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-danger"><th>Nowy wydatek</th><th>Dotychczas wydane</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-danger"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['expense_sum']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
+					var htmlString = '<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-danger"><th>Nowy wydatek</th><th>Dotychczas wydane</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-danger"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['expense_sum']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>';
+					$('#limitMessageDiv').html(htmlString);
+					$('#expenseMessageDiv').html(htmlString);
 					
 				} else if(jsonObj['overLimit'] == false){
 					// expenses below limit
-					$('#limitMessageDiv').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-success"><th>Nowy wydatek</th><th>Limit</th><th>Dotychczas wydane</th><th>Zapas [zł]</th></tr></thead><tbody><tr class="table-success"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['expense_sum']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
+					var htmlString = '<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-success"><th>Nowy wydatek</th><th>Limit</th><th>Dotychczas wydane</th><th>Zapas [zł]</th></tr></thead><tbody><tr class="table-success"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['expense_sum']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>';
+					$('#limitMessageDiv').html(htmlString);
+					$('#expenseMessageDiv').html(htmlString);
 					
 				}
+				
 				var hiddenInput = '<input type="text" id="overLimitInput" class="d-none" value="'+jsonObj['overLimit']+'">';
 				$(hiddenInput).appendTo('#limitMessageDiv');	
+				
 			} else {
 				// limit non-existent or expired
 				
