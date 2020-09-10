@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	jQuery.ajaxSetup({async:false});
 	/*
 	$('#test').on('click', function(){
 		var cat = $('input[name="expenceCat"]:checked');
@@ -15,33 +16,62 @@ $(document).ready(function(){
         }
     });
 	*/
-	jQuery.ajaxSetup({async:false});
+	$('#amount').on('change', function(){
+		var category = categorieVal = $("input[name='expenceCat']:checked").val();
+		if(category != '' && category != null){
+			//alert(category);
+			checkLimit()
+		}		
+	});
+	$("input[name='expenceCat']").on('change', function(){
+		var amount = $('#amount').val();
+		if(amount != '' && amount != null){
+			//alert(amount);
+			checkLimit()
+		}
+	});
+	function checkLimit(){
+		var amount = $('#amount').val();
+		let categorieVal = $("input[name='expenceCat']:checked").val();
+		$('#limitMessageDiv').html('');
+		$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(json){	
+			var jsonObj = $.parseJSON(json);
+					
+			if(jsonObj['limit'] != false){
+				//limit is on
+				if(jsonObj['overLimit'] == true){
+					// expenses over limit
+					$('#limitMessageDiv').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-danger"><th>Nowy wydatek</th><th>Dotychczas wydane</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-danger"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['expense_sum']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
+					
+				} else if(jsonObj['overLimit'] == false){
+					// expenses below limit
+					$('#limitMessageDiv').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-success"><th>Nowy wydatek</th><th>Limit</th><th>Dotychczas wydane</th><th>Zapas [zł]</th></tr></thead><tbody><tr class="table-success"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['expense_sum']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
+					
+				}
+				var hiddenInput = '<input type="text" id="overLimitInput" class="d-none" value="'+jsonObj['overLimit']+'">';
+				$(hiddenInput).appendTo('#limitMessageDiv');	
+			} else {
+				// limit non-existent or expired
+				
+				var hiddenInput = '<input type="text" id="overLimitInput" class="d-none" value="'+jsonObj['limit']+'">';
+				$(hiddenInput).appendTo('#limitMessageDiv');
+			}
+							
+		});	
+	};
 	$('#addExpenceButton').on('click', function(){
 		if(checkInputs()){
-			var amount = $('#amount').val();
-			let categorieVal = $("input[name='expenceCat']:checked").val();
-			$.post("/Expenses/checkLimitOfLastMonth", {categorie: categorieVal, expenseAmount: amount}, function(json){	
-				var jsonObj = $.parseJSON(json);
-				//console.log(jsonObj);
-				
-				if(jsonObj['limit'] != false){
-					if(jsonObj['overLimit'] == true){
-						$('#delete_limit_message').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-danger"><th>Nowy wydatek</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-danger"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
+			var limitActive = $('#overLimitInput').val();				
+				if(limitActive == "true"){					
 						$('#confirm_modal_over_limit').modal('show');
 						$('#addExpenseOffLimitButton').on('click', function(){
 							addNewExpenseToTheDatabase();
 							$('#confirm_modal_over_limit').modal('hide');
-						});
-					} else if(jsonObj['overLimit'] == false){
-						$('#expenseMessageDiv').html('<table class="table table-sm table-striped table-hover text-center"><thead><tr class="table-success"><th>Nowy wydatek</th><th>Limit</th><th>Przekroczony o [zł]</th></tr></thead><tbody><tr class="table-success"><td>'+jsonObj['new_expense']+'</td><td>'+jsonObj['limit']+'</td><td>'+jsonObj['difference']+'</td></tr></tbody></table>');
-						addNewExpenseToTheDatabase();
-					}
+						});					
 				} else {
 					// limit is not set or expired
 					addNewExpenseToTheDatabase();
-				}	
-									
-			});	
+				}													
 		} 
 	});
 	function addNewExpenseToTheDatabase(){

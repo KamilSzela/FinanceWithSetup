@@ -212,7 +212,7 @@
 			$limit = $_POST['limit'];
 			$catID = $_POST['idCat'];
 			if(Expense::setExpenseLimit($catID, $limit)){
-			echo ("<p class=\"text-success tect-center light-input-bg\"><b>Wprowadzono miesięczny limit w kategorii</b></p>");
+			echo ("<p class=\"text-success text-center light-input-bg\"><b>Wprowadzono miesięczny limit w kategorii</b></p>");
 			} else {
 				echo ("<p class=\"text-success text-center light-input-bg\"><b>Wystąpił błąd podczas wprowadzania limitu</b></p>");
 			}	

@@ -36,9 +36,11 @@
 	public function addAction(){		
 		if(Income::validateInputs($_POST)){			
 				if(Income::addNewIncome($_POST, $this->user)){
-					Flash::addMessage('Dodano nowy dochód do Twojej bazy danych!');
+					//Flash::addMessage('Dodano nowy dochód do Twojej bazy danych!');
+					
 					View::renderTemplate('Incomes/show.html', [
-						'income_cathegories' => $this->cathegories				
+						'income_cathegories' => $this->cathegories,	
+						'message' => 'Dodano nowy dochód do Twojej bazy danych!'
 					]);
 				}			 
 			

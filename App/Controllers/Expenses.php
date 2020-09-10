@@ -96,9 +96,9 @@
 					echo json_encode($aggregatedData);
 				} else {
 					// expenses below limit
-					$aggregatedData['limit'] = $limit;
-					$aggregatedData['expense_sum'] = $sumOfExpenses;
-					$aggregatedData['difference'] = $sumOfExpenses - $limit;
+					$aggregatedData['limit'] = round($limit,2);
+					$aggregatedData['expense_sum'] = round($sumOfExpenses,2);
+					$aggregatedData['difference'] = round($limit - $sumOfExpenses,2);
 					$aggregatedData['overLimit'] = false;
 					echo json_encode($aggregatedData);
 				}
