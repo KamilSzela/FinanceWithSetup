@@ -65,7 +65,7 @@
 	*/
 	public function checkLimitOfLastMonth(){	
 		$catId = $_POST['categorie'];
-		$newExpenseValue = $_POST['expenseAmount'];
+		$newExpenseValue = floatval($_POST['expenseAmount']);
 		$categoryData = Expense::getLimitOfCategorie($catId);
 		$dataArray = $categoryData[0];
 		$limit = floatval($dataArray['category_limit']);
@@ -91,7 +91,7 @@
 				if($sumOfExpenses > $limit){
 					// expenses over limit
 					$aggregatedData['limit'] = round($limit,2);
-					$aggregatedData['expense_sum'] = round($sumOfExpenses-$newExpenseValue,2);
+					$aggregatedData['expense_sum'] = round($sumOfExpenses-$newExpenseValue, 2);
 					$aggregatedData['difference'] = round($sumOfExpenses - $limit,2);
 					$aggregatedData['overLimit'] = true;
 					echo json_encode($aggregatedData);
